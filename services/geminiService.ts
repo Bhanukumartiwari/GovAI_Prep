@@ -1,13 +1,11 @@
-import { GoogleGenAI, Type } from "@google/genai";
 
-// Fix: Initialize the GoogleGenAI client as per the guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { GoogleGenAI, Type } from "@google/genai";
 
 export const getAnswerFromGemini = async (question: string): Promise<string> => {
   try {
-    const model = 'gemini-2.5-flash';
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const model = 'gemini-3-pro-preview';
     
-    // Fix: Call the Gemini API to generate content for a given question.
     const response = await ai.models.generateContent({
         model: model,
         contents: question,
@@ -16,12 +14,11 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
         }
     });
     
-    // Fix: Extract the text from the response as per guidelines.
-    return response.text;
+    return response.text || 'The AI was unable to generate a response. Please try rephrasing your question.';
 
   } catch (error) {
     console.error('Error fetching answer from Gemini:', error);
-    return 'An error occurred while fetching the answer. Please try again.';
+    return 'An error occurred while fetching the answer. Please ensure your API key is correctly configured in your environment.';
   }
 };
 
@@ -38,10 +35,10 @@ export interface QuizResponse {
 
 export const generateMcqQuiz = async (topic: string, count: number, exam: string, difficulty: string): Promise<QuizResponse> => {
     try {
-        const model = 'gemini-2.5-flash';
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const model = 'gemini-3-flash-preview';
         const prompt = `Generate a multiple-choice quiz with ${count} questions on the topic: "${topic}". The questions should be relevant for the **${exam}** exam with a **${difficulty}** difficulty level. For each question, provide 4 options (A, B, C, D) and indicate the correct answer key (e.g., "A").`;
 
-        // Fix: Call the Gemini API to generate a quiz in JSON format using a response schema.
         const response = await ai.models.generateContent({
             model: model,
             contents: prompt,
@@ -79,12 +76,12 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
             }
         });
         
-        const jsonStr = response.text.trim();
+        const jsonStr = response.text || '{"quiz": []}';
         return JSON.parse(jsonStr) as QuizResponse;
 
     } catch (error) {
         console.error('Error generating quiz:', error);
-        throw new Error('Failed to generate the quiz. The AI might not be able to create a quiz for this specific topic.');
+        throw new Error('Failed to generate the quiz. Please check your network connection or API configuration.');
     }
 }
 
@@ -97,7 +94,8 @@ export interface StudyPlanParams {
 
 export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }: StudyPlanParams): Promise<string> => {
   try {
-    const model = 'gemini-2.5-flash';
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const model = 'gemini-3-pro-preview';
     const prompt = `
       Create a detailed and actionable study plan for a student preparing for the **${exam}** exam.
 
@@ -109,15 +107,11 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
 
       **Instructions for the Plan:**
       1.  **Structure:** Organize the plan into a weekly schedule for the entire duration.
-      2.  **Daily Breakdown:** For each week, provide a day-by-day breakdown (Monday to Sunday).
+      2.  **Daily Breakdown:** For each week, provide a day-by-day breakdown.
       3.  **Task Allocation:** Assign specific topics or tasks for each study session. Balance new topics with revision.
       4.  **Practicality:** The plan must be realistic and sustainable for the specified daily hours.
-      5.  **Revisions & Mocks:** Incorporate regular revision sessions (daily, weekly) and mock tests (e.g., weekly or bi-weekly, especially towards the end of the plan).
-      6.  **Formatting:** Use Markdown for clear presentation. 
-          - Use a main heading for the plan title (e.g., '# Study Plan for ${exam}').
-          - Use second-level headings for each week (e.g., '## Week 1: Foundation Building').
-          - Use bullet points for daily tasks.
-          - Use bold formatting for important keywords, subjects, or actions (e.g., **Revision**, **Mock Test**).
+      5.  **Revisions & Mocks:** Incorporate regular revision sessions and mock tests.
+      6.  **Formatting:** Use Markdown for clear presentation.
 
       Generate the study plan now.
     `;
@@ -130,29 +124,20 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
       }
     });
 
-    return response.text;
+    return response.text || 'Could not generate study plan.';
   } catch (error) {
     console.error('Error generating study plan:', error);
-    return 'An error occurred while generating the study plan. Please try again.';
+    return 'An error occurred while generating the study plan. Please check if your API key is correctly set.';
   }
 };
 
 export const getExamInfo = async (exam: string): Promise<string> => {
   try {
-    const model = 'gemini-2.5-flash';
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const model = 'gemini-3-flash-preview';
     const prompt = `
-      Provide a comprehensive overview for the **${exam}** examination. The information should be accurate, up-to-date, and well-structured for an aspiring student.
-
-      **Instructions:**
-      1.  **Format:** Use Markdown for clear, hierarchical presentation.
-      2.  **Main Heading:** Start with a main heading for the exam name (e.g., '# Overview of ${exam} Exam').
-      3.  **Sections:** Include the following distinct sections, using second-level headings (e.g., '## Tentative Exam Dates'):
-          - **Tentative Exam Dates:** Mention key dates like notification release, application window, and exam dates for different stages (Prelims, Mains, etc.). State that these are tentative and subject to official notifications.
-          - **Exam Pattern:** Detail the structure of the exam. For each stage (e.g., Prelims, Mains, Interview), describe the mode (online/offline), duration, number of papers/subjects, total marks, and type of questions (MCQ/descriptive). Use tables if it enhances clarity.
-          - **Detailed Syllabus:** Provide a subject-wise syllabus breakdown for each stage of the exam. Use nested bullet points for topics and sub-topics to create a clear and easy-to-read structure.
-      4.  **Highlighting:** Use bold formatting (**...**) to highlight important terms, subjects, and key numbers.
-
-      Generate the exam information now.
+      Provide a comprehensive overview for the **${exam}** examination. Include Tentative Exam Dates, Exam Pattern, and a Subject-wise Syllabus breakdown.
+      Use Markdown for clear, hierarchical presentation. Highlight important terms using bold formatting.
     `;
 
     const response = await ai.models.generateContent({
@@ -163,10 +148,10 @@ export const getExamInfo = async (exam: string): Promise<string> => {
       }
     });
 
-    return response.text;
+    return response.text || 'Information not available.';
   } catch (error) {
     console.error('Error generating exam info:', error);
-    return 'An error occurred while generating the exam information. Please try again.';
+    return 'An error occurred while fetching exam information.';
   }
 };
 
@@ -183,7 +168,8 @@ export interface CurrentAffairsResponse {
 
 export const getCurrentAffairs = async (topic: string, date?: string, exam?: string): Promise<CurrentAffairsResponse> => {
   try {
-    const model = 'gemini-2.5-flash';
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const model = 'gemini-3-flash-preview';
     let prompt = `Provide a list of 5 recent and important current affairs articles on the topic: "${topic}".`;
 
     if (date) {
@@ -192,8 +178,6 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
     
     if (exam && exam !== 'All Exams') {
         prompt += ` The information should be highly relevant for aspirants of the **${exam}** exam.`
-    } else {
-        prompt += ` The information should be relevant for Indian government exam aspirants in general.`
     }
 
     const response = await ai.models.generateContent({
@@ -224,11 +208,11 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
       }
     });
 
-    const jsonStr = response.text.trim();
+    const jsonStr = response.text || '{"articles": []}';
     return JSON.parse(jsonStr) as CurrentAffairsResponse;
     
   } catch (error) {
     console.error('Error fetching current affairs:', error);
-    throw new Error('Failed to fetch and parse current affairs from the AI. The format might be unexpected. Please try a different topic.');
+    throw new Error('Failed to fetch and parse current affairs. Please check your configuration.');
   }
 };
