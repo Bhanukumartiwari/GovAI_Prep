@@ -12,8 +12,9 @@ import { MockTestsPage } from './pages/MockTestsPage';
 import { QuestionGeneratorPage } from './pages/QuestionGeneratorPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { ExamInfoPage } from './pages/ExamInfoPage';
+import { DocumentAnalyzerPage } from './pages/DocumentAnalyzerPage';
 
-export type Page = 'home' | 'dashboard' | 'tools' | 'current-affairs' | 'community' | 'contact' | 'study-planner' | 'mock-tests' | 'question-generator' | 'analytics' | 'exam-info';
+export type Page = 'home' | 'dashboard' | 'tools' | 'current-affairs' | 'community' | 'contact' | 'study-planner' | 'mock-tests' | 'question-generator' | 'analytics' | 'exam-info' | 'document-analyzer';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -42,6 +43,8 @@ const App: React.FC = () => {
         return <AnalyticsPage onNavigate={setCurrentPage} />;
       case 'exam-info':
         return <ExamInfoPage onNavigate={setCurrentPage} />;
+      case 'document-analyzer':
+        return <DocumentAnalyzerPage onNavigate={setCurrentPage} />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }

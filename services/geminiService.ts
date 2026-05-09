@@ -12,12 +12,13 @@ const getApiKey = () => {
 export const getAnswerFromGemini = async (question: string): Promise<string> => {
   const apiKey = getApiKey();
   if (!apiKey) {
-    return 'API key is not configured. If you are on Vercel, please add GEMINI_API_KEY to your Environment Variables.';
+    return 'API key is not configured. Please ensure GEMINI_API_KEY is set.';
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-pro-preview';
+    // Use gemini-flash-latest for stability and broad availability
+    const model = 'gemini-flash-latest';
     
     const response = await ai.models.generateContent({
         model: model,
@@ -27,12 +28,11 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
         }
     });
     
-    return response.text || 'The AI was unable to generate a response. Please try rephrasing your question.';
+    return response.text || 'The AI was unable to generate a response.';
 
   } catch (error: any) {
     console.error('Error fetching answer from Gemini:', error);
-    const errorMessage = error?.message || String(error);
-    return `An error occurred while fetching the answer: ${errorMessage}. Please ensure your Gemini API key is correctly configured and has sufficient quota.`;
+    return `An error occurred: ${error?.message || 'Failed to fetch answer.'}`;
   }
 };
 
@@ -51,13 +51,11 @@ export interface QuizResponse {
 
 export const generateMcqQuiz = async (topic: string, count: number, exam: string, difficulty: string): Promise<QuizResponse> => {
     const apiKey = getApiKey();
-    if (!apiKey) {
-        throw new Error('API key is not configured. Please add GEMINI_API_KEY to your environment.');
-    }
+    if (!apiKey) throw new Error('API key is not configured.');
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
+        const model = 'gemini-flash-latest';
         const prompt = `Generate a multiple-choice quiz with ${count} questions on the topic: "${topic}". The questions should be relevant for the **${exam}** exam with a **${difficulty}** difficulty level. For each question, provide 4 options (A, B, C, D), indicate the correct answer key (e.g., "A"), provide a brief clear explanation, and list 2-3 additional 'related facts' or 'important pointers' that are relevant to this specific topic/question for competitive exams.`;
 
         const response = await ai.models.generateContent({
@@ -70,11 +68,10 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
                     properties: {
                         quiz: {
                             type: Type.ARRAY,
-                            description: "An array of quiz questions.",
                             items: {
                                 type: Type.OBJECT,
                                 properties: {
-                                    question: { type: Type.STRING, description: "The question text." },
+                                    question: { type: Type.STRING },
                                     options: {
                                         type: Type.OBJECT,
                                         properties: {
@@ -83,15 +80,13 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
                                             C: { type: Type.STRING },
                                             D: { type: Type.STRING },
                                         },
-                                        required: ["A", "B", "C", "D"],
-                                        description: "The multiple choice options."
+                                        required: ["A", "B", "C", "D"]
                                     },
-                                    answer: { type: Type.STRING, description: "The correct option key (A, B, C, or D)." },
-                                    explanation: { type: Type.STRING, description: "A brief explanation of the correct answer." },
+                                    answer: { type: Type.STRING },
+                                    explanation: { type: Type.STRING },
                                     relatedFacts: {
                                         type: Type.ARRAY,
-                                        items: { type: Type.STRING },
-                                        description: "A list of related facts or pointers for extra learning."
+                                        items: { type: Type.STRING }
                                     }
                                 },
                                 required: ["question", "options", "answer", "explanation", "relatedFacts"]
@@ -106,9 +101,9 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
         const jsonStr = response.text || '{"quiz": []}';
         return JSON.parse(jsonStr) as QuizResponse;
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error generating quiz:', error);
-        throw new Error('Failed to generate the quiz. Please check your API configuration or quota.');
+        throw new Error(`Failed to generate quiz: ${error?.message}`);
     }
 }
 
@@ -121,88 +116,223 @@ export interface StudyPlanParams {
 
 export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }: StudyPlanParams): Promise<string> => {
   const apiKey = getApiKey();
-  if (!apiKey) {
-    return 'API key is not configured. Please add GEMINI_API_KEY to your environment.';
-  }
+  if (!apiKey) return 'API key is not configured.';
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-pro-preview';
-    const prompt = `
-      Create an extremely detailed, actionable, and comprehensive study plan for a student preparing for the **${exam}** exam.
-
-      **Student Profile:**
-      - **Target Exam:** ${exam}
-      - **Subjects to Cover:** ${subjects}
-      - **Total Preparation Duration:** ${duration}
-      - **Available Study Time:** ${dailyHours} hours per day
-
-      **Instructions for the Plan:**
-      1.  **Structure:** Organize the plan into a weekly schedule for the entire duration.
-      2.  **Daily Breakdown:** For each week, provide a day-by-day breakdown with specific sessions.
-      3.  **Task Allocation:** Assign specific topics or tasks for each study session. Balance new topics with revision.
-      4.  **Practicality:** The plan must be realistic and sustainable.
-      5.  **Revisions & Mocks:** Incorporate regular revision sessions and mock tests.
-      6.  **Formatting:** Use Markdown for clear presentation.
-      7.  **Additional Sections:** 
-          - **Expert Preparation Tips:** Specific strategies for this exam.
-          - **Recommended Resources:** Types of books, websites, or materials to use.
-          - **Mindset & Motivation:** Advice on staying consistent.
-
-      Generate the comprehensive study plan now.
-    `;
+    const model = 'gemini-flash-latest';
+    const prompt = `Create an extremely detailed, actionable, and comprehensive study plan for a student preparing for the **${exam}** exam with these subjects: ${subjects}. Duration: ${duration}. Daily hours: ${dailyHours}. Use Markdown.`;
 
     const response = await ai.models.generateContent({
       model: model,
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert academic counselor and exam strategist specializing in Indian government examinations. Your goal is to create highly effective, personalized, and motivating study plans with detailed explanations for every strategy."
+        systemInstruction: "You are an expert academic counselor for Indian exams."
       }
     });
 
     return response.text || 'Could not generate study plan.';
   } catch (error: any) {
     console.error('Error generating study plan:', error);
-    const errorMessage = error?.message || String(error);
-    return `An error occurred while generating the study plan: ${errorMessage}. Please check your API key.`;
+    return `Error: ${error?.message}`;
   }
 };
 
 export const getExamInfo = async (exam: string): Promise<string> => {
   const apiKey = getApiKey();
-  if (!apiKey) {
-    return 'API key is not configured.';
-  }
+  if (!apiKey) return 'API key is not configured.';
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
-    const prompt = `
-      Provide a highly detailed and comprehensive overview for the **${exam}** examination. 
-      Include:
-      1. **Tentative Exam Dates** (Prelims, Mains, Interview where applicable).
-      2. **In-depth Exam Pattern** (No. of papers, marks, duration, negative marking).
-      3. **Subject-wise Syllabus** (Detailed breakdown of topics).
-      4. **Success Strategy** (Top 5 tips to crack this exam).
-      5. **Recommended Resources** (Standard books and online portals).
-      
-      Use Markdown for clear, hierarchical presentation. Highlight important terms using bold formatting.
-    `;
+    const model = 'gemini-flash-latest';
+    const prompt = `Provide detailed info for the **${exam}** exam (Dates, Pattern, Syllabus, Strategy). Use Markdown.`;
 
     const response = await ai.models.generateContent({
       model: model,
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert AI assistant specializing in Indian government examinations. Your primary function is to provide accurate, highly detailed, and structured information about exam patterns, syllabi, and success strategies."
+        systemInstruction: "You are an expert exam strategist."
       }
     });
 
     return response.text || 'Information not available.';
   } catch (error: any) {
-    console.error('Error generating exam info:', error);
-    const errorMessage = error?.message || String(error);
-    return `An error occurred while fetching exam information: ${errorMessage}.`;
+    console.error('Error fetching exam info:', error);
+    return `Error: ${error?.message}`;
   }
+};
+
+export const analyzeDocument = async (text: string): Promise<string> => {
+    const apiKey = getApiKey();
+    if (!apiKey) return 'API Key is missing.';
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const model = 'gemini-flash-latest';
+        const prompt = `Analyze and summarize this study material text. Extract key concepts, dates, names, and formulas. Use Markdown. TEXT: ${text}`;
+
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: prompt,
+            config: {
+                systemInstruction: "You are an expert study material analyzer."
+            }
+        });
+
+        return response.text || 'Could not analyze document.';
+    } catch (error: any) {
+        console.error('Error analyzing document:', error);
+        return `Error: ${error?.message}`;
+    }
+};
+
+export const generateQuestionsFromText = async (text: string, count: number = 5): Promise<QuizResponse> => {
+    const apiKey = getApiKey();
+    if (!apiKey) throw new Error('API Key is missing.');
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const model = 'gemini-flash-latest';
+        const prompt = `Based on this text, generate ${count} high-quality MCQs for competitive exams. Output in JSON. TEXT: ${text}`;
+
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        quiz: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    question: { type: Type.STRING },
+                                    options: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            A: { type: Type.STRING },
+                                            B: { type: Type.STRING },
+                                            C: { type: Type.STRING },
+                                            D: { type: Type.STRING }
+                                        },
+                                        required: ["A", "B", "C", "D"]
+                                    },
+                                    answer: { type: Type.STRING },
+                                    explanation: { type: Type.STRING },
+                                    relatedFacts: {
+                                        type: Type.ARRAY,
+                                        items: { type: Type.STRING }
+                                    }
+                                },
+                                required: ["question", "options", "answer", "explanation", "relatedFacts"]
+                            }
+                        }
+                    },
+                    required: ["quiz"]
+                }
+            }
+        });
+
+        const jsonStr = response.text || '{"quiz": []}';
+        return JSON.parse(jsonStr) as QuizResponse;
+    } catch (error: any) {
+        console.error('Error generating questions from text:', error);
+        throw new Error(`Failed to generate questions: ${error?.message}`);
+    }
+};
+
+export const analyzeDocumentMultimodal = async (imageParts: { inlineData: { data: string; mimeType: string } }[]): Promise<string> => {
+    const apiKey = getApiKey();
+    if (!apiKey) return 'API Key is missing.';
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const model = 'gemini-flash-latest';
+        
+        const textPart = {
+            text: `
+                Analyze and summarize the following study material provided as images (handwritten notes or scanned documents).
+                The notes may be in English, Hindi, or a mix of both.
+                1. Perform OCR to extract the text accurately.
+                2. Summarize the content, highlighting key concepts, important dates, names, and formulas. 
+                3. Organize the information into clear sections using Markdown.
+                4. Include a 'Key Takeaways' section at the end.
+                If the text is in Hindi, provide the summary in English but include relevant Hindi terms in brackets.
+            `
+        };
+
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: { parts: [...imageParts, textPart] },
+            config: {
+                systemInstruction: "You are an expert handwriting and document analyzer specializing in Indian competitive exams. You can read both English and Hindi scripts fluently."
+            }
+        });
+
+        return response.text || 'Could not analyze content.';
+    } catch (error: any) {
+        console.error('Error analyzing document multimodal:', error);
+        return `Error: ${error?.message || 'Failed to analyze document.'}`;
+    }
+};
+
+export const generateQuestionsFromMultimodal = async (imageParts: { inlineData: { data: string; mimeType: string } }[], count: number = 5): Promise<QuizResponse> => {
+    const apiKey = getApiKey();
+    if (!apiKey) throw new Error('API Key is missing.');
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const model = 'gemini-flash-latest';
+        const prompt = `Based on the attached images of study notes (potentially in English or Hindi), generate ${count} high-quality MCQs suitable for UPSC/SSC. Provide output in JSON format in English.`;
+
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: { parts: [...imageParts, { text: prompt }] },
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        quiz: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    question: { type: Type.STRING },
+                                    options: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            A: { type: Type.STRING },
+                                            B: { type: Type.STRING },
+                                            C: { type: Type.STRING },
+                                            D: { type: Type.STRING }
+                                        },
+                                        required: ["A", "B", "C", "D"]
+                                    },
+                                    answer: { type: Type.STRING },
+                                    explanation: { type: Type.STRING },
+                                    relatedFacts: {
+                                        type: Type.ARRAY,
+                                        items: { type: Type.STRING }
+                                    }
+                                },
+                                required: ["question", "options", "answer", "explanation", "relatedFacts"]
+                            }
+                        }
+                    },
+                    required: ["quiz"]
+                }
+            }
+        });
+
+        const jsonStr = response.text || '{"quiz": []}';
+        return JSON.parse(jsonStr) as QuizResponse;
+    } catch (error: any) {
+        console.error('Error generating questions from multimodal:', error);
+        throw new Error(`Failed to generate questions: ${error?.message}`);
+    }
 };
 
 export interface NewsItem {
@@ -226,7 +356,7 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-flash-latest';
     let prompt = `Provide a list of 5 recent and important current affairs articles on the topic: "${topic}".`;
 
     if (date) {
@@ -247,16 +377,15 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
           properties: {
             articles: {
               type: Type.ARRAY,
-              description: "An array of current affairs articles.",
               items: {
                 type: Type.OBJECT,
                 properties: {
-                  title: { type: Type.STRING, description: "The headline of the article." },
-                  summary: { type: Type.STRING, description: "A brief summary of the article (2-3 sentences)." },
-                  detailedAnalysis: { type: Type.STRING, description: "A detailed explanation of the event and its background." },
-                  examRelevance: { type: Type.STRING, description: "Why this event is important from an exam perspective (e.g., related to GS Paper II, etc.)." },
-                  date: { type: Type.STRING, description: "The approximate date of the event or article." },
-                  category: { type: Type.STRING, description: "A relevant category (e.g., Polity, Economy, Science & Tech, National, International)." }
+                  title: { type: Type.STRING },
+                  summary: { type: Type.STRING },
+                  detailedAnalysis: { type: Type.STRING },
+                  examRelevance: { type: Type.STRING },
+                  date: { type: Type.STRING },
+                  category: { type: Type.STRING }
                 },
                 required: ["title", "summary", "detailedAnalysis", "examRelevance", "date", "category"]
               }
@@ -272,7 +401,6 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
     
   } catch (error: any) {
     console.error('Error fetching current affairs:', error);
-    const errorMessage = error?.message || String(error);
-    throw new Error(`Failed to fetch current affairs: ${errorMessage}. Please check your configuration.`);
+    throw new Error(`Failed to fetch current affairs: ${error?.message}`);
   }
 };
