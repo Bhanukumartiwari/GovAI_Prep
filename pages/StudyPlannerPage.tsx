@@ -59,7 +59,7 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPlan(''); // Clear previous plan on new submission
+    setPlan(''); 
     await generatePlan();
   };
 
@@ -70,8 +70,7 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }
   const handleDownloadPlan = () => {
     if (!plan) return;
 
-    const title = `Study Plan for ${formData.exam}`;
-    const htmlContent = markdownToHtml(plan);
+    const title = `Study Plan: ${formData.exam}`;
     const printWindow = window.open('', '_blank');
     
     printWindow?.document.write(`
@@ -79,133 +78,193 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }
             <head>
                 <title>${title}</title>
                 <style>
-                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; padding: 2rem; color: #333; }
-                    h1, h2, h3 { color: #000; }
-                    strong { color: #0056b3; }
+                    body { font-family: 'Inter', sans-serif; line-height: 1.6; padding: 3rem; color: #1f2937; max-width: 800px; margin: 0 auto; }
+                    h1 { font-size: 2.5rem; font-weight: 800; color: #111827; margin-bottom: 2rem; border-bottom: 4px solid #3b82f6; padding-bottom: 1rem; }
+                    h2 { font-size: 1.8rem; font-weight: 700; color: #1f2937; margin-top: 2rem; }
+                    h3 { font-size: 1.3rem; font-weight: 600; color: #374151; }
+                    p { margin-bottom: 1rem; }
+                    strong { color: #1d4ed8; }
                     @media print {
                         body { padding: 0; }
-                        @page { margin: 1in; }
-                        button { display: none; }
                     }
                 </style>
             </head>
             <body>
                 <h1>${title}</h1>
-                <hr />
-                ${htmlContent}
+                <div class="content">${plan.replace(/\n/g, '<br/>')}</div>
             </body>
         </html>
     `);
 
     printWindow?.document.close();
     printWindow?.focus();
-    printWindow?.print();
+    setTimeout(() => printWindow?.print(), 500);
   };
 
-  const formInputClass = "w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-200";
-  const formLabelClass = "block text-md font-semibold text-gray-700 mb-2";
+  const formInputClass = "w-full p-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-lg font-medium";
+  const formLabelClass = "block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1";
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <button
-        onClick={() => onNavigate('tools')}
-        className="flex items-center gap-2 text-blue-600 font-semibold hover:underline mb-6"
-      >
-        <BackIcon />
-        Back to Tools
-      </button>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-6xl">
+      <div className="flex items-center justify-between mb-10">
+        <nav className="flex items-center text-sm font-bold text-gray-400 uppercase tracking-widest overflow-x-auto whitespace-nowrap">
+          <button onClick={() => onNavigate('dashboard')} className="hover:text-blue-600 transition-colors">Dashboard</button>
+          <span className="mx-3 opacity-30">/</span>
+          <button onClick={() => onNavigate('tools')} className="hover:text-blue-600 transition-colors">Tools</button>
+          <span className="mx-3 opacity-30">/</span>
+          <span className="text-gray-900">AI Study Planner</span>
+        </nav>
+        <button 
+                onClick={() => onNavigate('tools')}
+                className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
+            >
+                <BackIcon />
+                <span>Return to Arsenal</span>
+            </button>
+      </div>
 
-      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
-            <PlannerIcon />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI Study Planner</h1>
-            <p className="text-gray-600 mt-1">Generate a personalized study schedule tailored to your goals.</p>
-          </div>
+      <div className="grid lg:grid-cols-5 gap-12">
+        <div className="lg:col-span-2">
+            <div className="sticky top-28">
+                <div className="w-16 h-16 bg-blue-600 rounded-2xl shadow-xl shadow-blue-200 flex items-center justify-center text-white mb-8">
+                    <PlannerIcon />
+                </div>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                    Design Your <br />
+                    <span className="text-blue-600 italic">Success Roadmap.</span>
+                </h1>
+                <p className="text-gray-500 text-lg font-medium leading-relaxed mb-10">
+                    Our AI analyzes your subjects, duration, and pace to create a week-by-week strategy that maximizes retention.
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-12 -mt-12"></div>
+                    
+                    <div className="relative z-10 space-y-6">
+                        <div>
+                            <label htmlFor="exam" className={formLabelClass}>Target Exam</label>
+                            <input
+                                type="text"
+                                id="exam"
+                                name="exam"
+                                value={formData.exam}
+                                onChange={handleInputChange}
+                                className={formInputClass}
+                                placeholder="e.g. UPSC Prelims 2024"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="subjects" className={formLabelClass}>Syllabus Core</label>
+                            <textarea
+                                id="subjects"
+                                name="subjects"
+                                value={formData.subjects}
+                                onChange={handleInputChange}
+                                className={`${formInputClass} h-32 resize-none`}
+                                placeholder="List your key subjects..."
+                                required
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="duration" className={formLabelClass}>Timeline</label>
+                                <select
+                                    id="duration"
+                                    name="duration"
+                                    value={formData.duration}
+                                    onChange={handleInputChange}
+                                    className={formInputClass}
+                                    required
+                                >
+                                    <option>1 Month</option>
+                                    <option>3 Months</option>
+                                    <option>6 Months</option>
+                                    <option>1 Year</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="dailyHours" className={formLabelClass}>Daily Hours</label>
+                                <input
+                                    type="number"
+                                    id="dailyHours"
+                                    name="dailyHours"
+                                    value={formData.dailyHours}
+                                    onChange={handleInputChange}
+                                    className={formInputClass}
+                                    placeholder="6"
+                                    min="1"
+                                    max="16"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full py-5 bg-gray-900 hover:bg-black text-white font-bold rounded-2xl shadow-xl transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <span>Generating Strategy...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Generate Study Plan</span>
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
-            <label htmlFor="exam" className={formLabelClass}>Target Exam</label>
-            <input
-              type="text"
-              id="exam"
-              name="exam"
-              value={formData.exam}
-              onChange={handleInputChange}
-              className={formInputClass}
-              placeholder="e.g., UPSC, SSC CGL, IBPS PO"
-              required
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label htmlFor="subjects" className={formLabelClass}>Subjects to Cover</label>
-            <textarea
-              id="subjects"
-              name="subjects"
-              value={formData.subjects}
-              onChange={handleInputChange}
-              className={`${formInputClass} h-24 resize-y`}
-              placeholder="e.g., History, Geography, Quantitative Aptitude"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="duration" className={formLabelClass}>Preparation Duration</label>
-            <select
-              id="duration"
-              name="duration"
-              value={formData.duration}
-              onChange={handleInputChange}
-              className={formInputClass}
-              required
-            >
-              <option>1 Month</option>
-              <option>3 Months</option>
-              <option>6 Months</option>
-              <option>1 Year</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="dailyHours" className={formLabelClass}>Daily Study Hours</label>
-            <input
-              type="number"
-              id="dailyHours"
-              name="dailyHours"
-              value={formData.dailyHours}
-              onChange={handleInputChange}
-              className={formInputClass}
-              placeholder="e.g., 6"
-              min="1"
-              max="16"
-              required
-            />
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
-            >
-              {isLoading ? 'Generating Plan...' : 'Generate Study Plan'}
-            </button>
-          </div>
-        </form>
-      </div>
-      
-      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-      
-      <div className="mt-8 relative">
-        {isLoading && !plan && <Loader />}
-        <AnswerDisplay 
-            answer={plan} 
-            title="Your Personalised Study Plan"
-            onRefresh={plan ? handleRefresh : undefined}
-            onDownload={plan ? handleDownloadPlan : undefined}
-            isLoading={isLoading}
-        />
+        <div className="lg:col-span-3">
+             {error && (
+                <div className="mb-8 p-6 bg-red-50 text-red-700 border-l-4 border-red-500 rounded-r-2xl font-bold animate-pulse">
+                    {error}
+                </div>
+            )}
+            
+            <div className="relative">
+                {isLoading && !plan ? (
+                    <div className="bg-white p-20 rounded-[40px] shadow-xl border border-gray-50 flex flex-col items-center justify-center text-center">
+                        <Loader />
+                        <h3 className="mt-8 text-2xl font-bold text-gray-900 font-display">Crafting your roadmap...</h3>
+                        <p className="text-gray-500 mt-2 font-medium">Analyzing exam notification and subject dependencies.</p>
+                    </div>
+                ) : (
+                    <AnswerDisplay 
+                        answer={plan || "### Your study plan will appear here\nFill out the form on the left to generate a comprehensive, AI-powered study schedule for your target exam."} 
+                        title={plan ? `${formData.exam} - Master Plan` : "Roadmap Preview"}
+                        onRefresh={plan ? handleRefresh : undefined}
+                        onDownload={plan ? handleDownloadPlan : undefined}
+                        isLoading={isLoading}
+                    />
+                )}
+            </div>
+            
+            {!plan && !isLoading && (
+                <div className="grid md:grid-cols-2 gap-6 mt-12">
+                    <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 text-lg">📈</div>
+                        <div>
+                            <h4 className="font-bold text-blue-900 mb-1">Adaptive Logic</h4>
+                            <p className="text-sm text-blue-700/80 leading-relaxed">Plans adjust difficulty based on your subject familiarity and available hours.</p>
+                        </div>
+                    </div>
+                    <div className="bg-green-50 p-6 rounded-3xl border border-green-100 flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-green-600 text-lg">🎯</div>
+                        <div>
+                            <h4 className="font-bold text-green-900 mb-1">Weekly Milestones</h4>
+                            <p className="text-sm text-green-700/80 leading-relaxed">Breaks down massive syllabi into bite-sized, achievable weekly targets.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
       </div>
     </div>
   );

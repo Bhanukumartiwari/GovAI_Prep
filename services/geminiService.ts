@@ -145,20 +145,41 @@ export const getExamInfo = async (exam: string): Promise<string> => {
   try {
     const ai = new GoogleGenAI({ apiKey });
     const model = 'gemini-flash-latest';
-    const prompt = `Provide detailed info for the **${exam}** exam (Dates, Pattern, Syllabus, Strategy). Use Markdown.`;
+    const prompt = `
+      Provide a highly detailed, student-friendly, and structured overview for the **${exam}** examination. 
+      
+      Structure the response using the following headers and guidelines:
+      
+      ## 📅 Key Exam Dates & Timeline
+      (Provide a clear timeline of Prelims, Mains, and Interview dates if known, or tentative month/season).
+      
+      ## 📝 Exam Pattern & Marking Scheme
+      (Use a markdown table or bullet points to explain papers, marks, duration, and negative marking clearly).
+      
+      ## 📚 Detailed Subject-wise Syllabus
+      (Break down the syllabus into logical groups like General Studies, Optional, Aptitude, etc.)
+      
+      ## 🚀 5-Step Success Strategy
+      (Provide actionable, step-by-step advice for aspirants).
+      
+      ## 📖 Top Recommended Resources
+      (List the "Standard Books" and essential websites/portals).
+
+      Use bold text for emphasis, bullet points for readability, and clear Markdown structure. Keep the tone encouraging and professional.
+    `;
 
     const response = await ai.models.generateContent({
       model: model,
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert exam strategist."
+        systemInstruction: "You are an expert exam counselor specializing in Indian government exams. Your goal is to make complex exam notifications easy to understand for beginners."
       }
     });
 
     return response.text || 'Information not available.';
   } catch (error: any) {
     console.error('Error fetching exam info:', error);
-    return `Error: ${error?.message}`;
+    return `Error: ${error?.message || 'Failed to fetch information.'}`;
   }
 };
 

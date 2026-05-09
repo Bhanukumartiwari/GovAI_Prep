@@ -35,44 +35,56 @@ interface AnalyticsPageProps {
 
 export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({ onNavigate }) => {
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <button
-                onClick={() => onNavigate('tools')}
-                className="flex items-center gap-2 text-blue-600 font-semibold hover:underline mb-6"
-            >
-                <BackIcon />
-                Back to Tools
-            </button>
-             <div className="flex items-center gap-4 mb-6">
-                <div className="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-full">
-                    <AnalyticsIcon />
-                </div>
-                <div>
-                    <h1 className="text-4xl font-bold text-gray-900">Performance Analytics</h1>
-                    <p className="text-lg text-gray-600">Track your progress and identify areas for improvement.</p>
-                </div>
-             </div>
-
-            {/* Overview Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <StatCard icon={<TargetIcon />} title="Average Score" value={`${mockStats.averageScore}%`} />
-                <StatCard icon={<CheckCircleIcon />} title="Overall Accuracy" value={`${mockStats.accuracy}%`} />
-                <StatCard icon={<GoalsIcon />} title="Tests Taken" value={mockStats.testsTaken.toString()} />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-7xl">
+            <div className="flex items-center justify-between mb-10">
+                <nav className="flex items-center text-sm font-bold text-gray-400 uppercase tracking-widest overflow-x-auto whitespace-nowrap">
+                    <button onClick={() => onNavigate('dashboard')} className="hover:text-blue-600 transition-colors">Dashboard</button>
+                    <span className="mx-3 opacity-30">/</span>
+                    <span className="text-gray-900">Operational Analytics</span>
+                </nav>
+                <button 
+                    onClick={() => onNavigate('dashboard')}
+                    className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
+                >
+                    <BackIcon />
+                    <span>Return to Command</span>
+                </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+                <div className="max-w-2xl">
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                        Mission <span className="text-blue-600">Metrics.</span>
+                    </h1>
+                    <p className="text-xl text-gray-500 font-medium leading-relaxed">
+                        Comprehensive intelligence on your academic performance and preparation trajectory.
+                    </p>
+                </div>
+            </header>
+
+            {/* Overview Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <StatCard icon={<TargetIcon />} title="Mean Accuracy" value={`${mockStats.averageScore}%`} trend="+2.4%" />
+                <StatCard icon={<CheckCircleIcon />} title="Peak Performance" value={`${mockStats.accuracy}%`} trend="+1.1%" />
+                <StatCard icon={<GoalsIcon />} title="Simulation Count" value={mockStats.testsTaken.toString()} trend="Active" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Subject Performance */}
-                <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Subject-wise Performance</h2>
-                    <div className="space-y-4">
+                <div className="lg:col-span-4 bg-white p-8 md:p-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500">
+                    <h2 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-10 block">Vertical Mastery</h2>
+                    <div className="space-y-8">
                         {mockSubjectPerformance.map(sub => (
-                            <div key={sub.subject}>
-                                <div className="flex justify-between mb-1">
-                                    <span className="text-base font-medium text-gray-700">{sub.subject}</span>
-                                    <span className="text-sm font-medium text-blue-700">{sub.accuracy}%</span>
+                            <div key={sub.subject} className="group">
+                                <div className="flex justify-between items-end mb-3">
+                                    <span className="text-sm font-black text-gray-900 uppercase tracking-tight">{sub.subject}</span>
+                                    <span className="text-xs font-black text-blue-600">{sub.accuracy}%</span>
                                 </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                    <div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${sub.accuracy}%`}}></div>
+                                <div className="w-full bg-gray-50 rounded-full h-1.5 overflow-hidden">
+                                    <div 
+                                        className="bg-blue-600 h-full rounded-full transition-all duration-1000 group-hover:bg-blue-400" 
+                                        style={{width: `${sub.accuracy}%`}}
+                                    ></div>
                                 </div>
                             </div>
                         ))}
@@ -80,25 +92,33 @@ export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* Test History */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                     <h2 className="text-xl font-bold text-gray-800 mb-4">Test History</h2>
+                <div className="lg:col-span-8 bg-white p-8 md:p-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 overflow-hidden">
+                     <h2 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-10 block">Deployment History</h2>
                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left text-gray-500">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3">Test Name</th>
-                                    <th scope="col" className="px-6 py-3">Score</th>
-                                    <th scope="col" className="px-6 py-3">Accuracy</th>
-                                    <th scope="col" className="px-6 py-3">Date</th>
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-gray-50">
+                                    <th className="pb-6 text-[10px] font-black text-gray-400 uppercase tracking-widest px-4">Operation</th>
+                                    <th className="pb-6 text-[10px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Score</th>
+                                    <th className="pb-6 text-[10px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Efficiency</th>
+                                    <th className="pb-6 text-[10px] font-black text-gray-400 uppercase tracking-widest px-4 text-right">Date</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-gray-50">
                                 {mockTestHistory.map((test, index) => (
-                                    <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{test.name}</th>
-                                        <td className="px-6 py-4">{test.score}</td>
-                                        <td className="px-6 py-4">{test.accuracy}</td>
-                                        <td className="px-6 py-4">{test.date}</td>
+                                    <tr key={index} className="group hover:bg-blue-50/30 transition-colors">
+                                        <td className="py-6 px-4">
+                                            <div className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{test.name}</div>
+                                        </td>
+                                        <td className="py-6 px-4 text-center">
+                                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{test.score}</span>
+                                        </td>
+                                        <td className="py-6 px-4 text-center">
+                                            <span className="text-xs font-black text-blue-600">{test.accuracy}</span>
+                                        </td>
+                                        <td className="py-6 px-4 text-right">
+                                            <span className="text-xs font-bold text-gray-400 font-mono">{test.date}</span>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -114,16 +134,20 @@ interface StatCardProps {
     icon: React.ReactNode;
     title: string;
     value: string;
+    trend: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ icon, title, value }) => (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center gap-4">
-        <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
-            {React.cloneElement(icon as React.ReactElement, { className: "h-6 w-6" })}
+const StatCard: React.FC<StatCardProps> = ({ icon, title, value, trend }) => (
+    <div className="bg-white p-8 md:p-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 group">
+        <div className="flex justify-between items-start mb-10">
+            <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                {React.cloneElement(icon as React.ReactElement, { size: 24 })}
+            </div>
+            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">{trend}</span>
         </div>
         <div>
-            <p className="text-sm font-medium text-gray-500">{title}</p>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">{title}</p>
+            <p className="text-4xl font-black text-gray-900 font-display tracking-tight">{value}</p>
         </div>
     </div>
 );

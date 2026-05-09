@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { CopyIcon } from './icons/CopyIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { LightbulbIcon } from './icons/LightbulbIcon';
@@ -17,21 +18,6 @@ interface AnswerDisplayProps {
   generateMoreTooltip?: string;
 }
 
-const formatAnswer = (text: string) => {
-    if (!text) return '';
-
-    const escapedText = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    return escapedText
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-800 font-semibold">$1</strong>')
-        .replace(/\n/g, '<br />');
-};
-
 export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({ 
   answer, 
   title = "AI Generated Answer",
@@ -45,9 +31,8 @@ export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const plainText = answer.replace(/<[^>]*>/g, '');
-    navigator.clipboard.writeText(plainText);
     setCopied(true);
+    navigator.clipboard.writeText(answer);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -68,26 +53,26 @@ export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
   const actionButtonClasses = "flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed";
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-y-2">
-        <h2 className="text-xl font-bold text-gray-800 m-0">{title}</h2>
+    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-y-4 border-b border-gray-100 pb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 m-0">{title}</h2>
         <div className="flex items-center gap-2 flex-wrap">
           {onRefresh && (
             <button onClick={onRefresh} disabled={isLoading || isGeneratingMore} className={actionButtonClasses} title="Regenerate the answer">
-              <RefreshIcon /> Refresh
+              <RefreshIcon /> <span className="hidden sm:inline">Refresh</span>
             </button>
           )}
           {onGenerateMore && (
             <button onClick={onGenerateMore} disabled={isLoading || isGeneratingMore} className={actionButtonClasses} title={generateMoreTooltip}>
               {isGeneratingMore ? (
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               ) : <PlusIcon />}
-              {isGeneratingMore ? 'Generating...' : 'Generate More'}
+              <span className="hidden sm:inline">{isGeneratingMore ? 'Generating...' : 'Generate More'}</span>
             </button>
           )}
            {onDownload && (
             <button onClick={onDownload} disabled={isLoading || isGeneratingMore || !answer} className={actionButtonClasses} title="Download as Markdown file">
-              <DownloadIcon /> Download
+              <DownloadIcon /> <span className="hidden sm:inline">Download</span>
             </button>
           )}
           <button
@@ -96,14 +81,13 @@ export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
             aria-label="Copy answer to clipboard"
           >
             {copied ? <CheckIcon /> : <CopyIcon />}
-            {copied ? 'Copied!' : 'Copy'}
+            <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
           </button>
         </div>
       </div>
-      <div
-        className="prose max-w-none text-gray-700"
-        dangerouslySetInnerHTML={{ __html: formatAnswer(answer) }}
-      />
+      <div className="markdown-body">
+        <ReactMarkdown>{answer}</ReactMarkdown>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { QuestionForm } from './QuestionForm';
 import { AnswerDisplay } from './AnswerDisplay';
 import { Loader } from './Loader';
@@ -30,27 +31,35 @@ export const DoubtSolver: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200 relative">
+    <div className="relative">
       {isLoading && <Loader />}
-      <div className="flex items-center gap-3 mb-6">
-        <SparklesIcon />
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI Doubt Solver</h1>
-      </div>
-      <p className="text-gray-600 mb-6">
-        Stuck on a concept? Get instant, detailed explanations for any question related to the government exam syllabus.
-      </p>
       
-      <QuestionForm 
-        question={question} 
-        setQuestion={setQuestion} 
-        onSubmit={handleSubmit} 
-        isLoading={isLoading} 
-      />
-      
-      {error && <p className="text-red-500 mt-4">{error}</p>}
-      
-      <div className="mt-8">
-        <AnswerDisplay answer={answer} />
+      <div className="relative z-10">
+          <QuestionForm 
+            question={question} 
+            setQuestion={setQuestion} 
+            onSubmit={handleSubmit} 
+            isLoading={isLoading} 
+          />
+          
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 text-sm font-medium">
+                {error}
+            </div>
+          )}
+          
+          <div className="mt-10">
+            <AnimatePresence>
+                {answer && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <AnswerDisplay answer={answer} title="AI Response" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+          </div>
       </div>
     </div>
   );
