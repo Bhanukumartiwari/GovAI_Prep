@@ -3,8 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 const getApiKey = () => {
   const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
-  if (!key || key === 'undefined') {
-    console.error('Gemini API key is missing. Please set GEMINI_API_KEY in your environment variables.');
+  if (!key || key === 'undefined' || key === 'null') {
     return '';
   }
   return key;
@@ -18,7 +17,7 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3.1-pro-preview';
+    const model = 'gemini-3-pro-preview';
     
     const response = await ai.models.generateContent({
         model: model,
@@ -30,9 +29,10 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
     
     return response.text || 'The AI was unable to generate a response. Please try rephrasing your question.';
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching answer from Gemini:', error);
-    return 'An error occurred while fetching the answer. Please ensure your Gemini API key is correctly configured and has sufficient quota.';
+    const errorMessage = error?.message || String(error);
+    return `An error occurred while fetching the answer: ${errorMessage}. Please ensure your Gemini API key is correctly configured and has sufficient quota.`;
   }
 };
 
@@ -127,7 +127,7 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3.1-pro-preview';
+    const model = 'gemini-3-pro-preview';
     const prompt = `
       Create an extremely detailed, actionable, and comprehensive study plan for a student preparing for the **${exam}** exam.
 
@@ -161,9 +161,10 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
     });
 
     return response.text || 'Could not generate study plan.';
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating study plan:', error);
-    return 'An error occurred while generating the study plan. Please check your API key.';
+    const errorMessage = error?.message || String(error);
+    return `An error occurred while generating the study plan: ${errorMessage}. Please check your API key.`;
   }
 };
 
@@ -197,9 +198,10 @@ export const getExamInfo = async (exam: string): Promise<string> => {
     });
 
     return response.text || 'Information not available.';
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating exam info:', error);
-    return 'An error occurred while fetching exam information.';
+    const errorMessage = error?.message || String(error);
+    return `An error occurred while fetching exam information: ${errorMessage}.`;
   }
 };
 
@@ -268,8 +270,9 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
     const jsonStr = response.text || '{"articles": []}';
     return JSON.parse(jsonStr) as CurrentAffairsResponse;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching current affairs:', error);
-    throw new Error('Failed to fetch and parse current affairs. Please check your configuration.');
+    const errorMessage = error?.message || String(error);
+    throw new Error(`Failed to fetch current affairs: ${errorMessage}. Please check your configuration.`);
   }
 };
