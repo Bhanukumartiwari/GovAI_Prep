@@ -69,13 +69,33 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({ quizData, onRegenerate
               );
             })}
           </div>
-          <div className="mt-4 text-right">
-            <button
-              onClick={() => toggleAnswer(index)}
-              className="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
-            >
-              {revealedAnswers[index] ? 'Hide Answer' : 'Show Answer'}
-            </button>
+          <div className="mt-4 flex flex-col gap-4">
+            {revealedAnswers[index] && (
+              <div className="space-y-3">
+                <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-md">
+                  <p className="text-sm font-bold text-blue-800 mb-1">Explanation:</p>
+                  <p className="text-sm text-blue-700">{q.explanation}</p>
+                </div>
+                {q.relatedFacts && q.relatedFacts.length > 0 && (
+                  <div className="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-md">
+                    <p className="text-sm font-bold text-amber-800 mb-2">Important Related Facts:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      {q.relatedFacts.map((fact, factIndex) => (
+                        <li key={factIndex} className="text-sm text-amber-800">{fact}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="text-right">
+              <button
+                onClick={() => toggleAnswer(index)}
+                className="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
+              >
+                {revealedAnswers[index] ? 'Hide Answer' : 'Show Answer'}
+              </button>
+            </div>
           </div>
         </div>
       ))}

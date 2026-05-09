@@ -23,15 +23,15 @@ const App: React.FC = () => {
       case 'home':
         return <HomePage onNavigate={setCurrentPage} />;
       case 'dashboard':
-        return <DashboardPage />;
+        return <DashboardPage onNavigate={setCurrentPage} />;
       case 'tools':
         return <ToolsPage onNavigate={setCurrentPage} />;
       case 'current-affairs':
-        return <CurrentAffairsPage />;
+        return <CurrentAffairsPage onNavigate={setCurrentPage} />;
       case 'community':
-        return <CommunityPage />;
+        return <CommunityPage onNavigate={setCurrentPage} />;
       case 'contact':
-        return <ContactPage />;
+        return <ContactPage onNavigate={setCurrentPage} />;
       case 'study-planner':
         return <StudyPlannerPage onNavigate={setCurrentPage} />;
       case 'mock-tests':

@@ -185,6 +185,17 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
                         <strong>Your Answer:</strong> ${userAnswerText}
                     </p>
                     <p><strong>Correct Answer:</strong> ${correctAnswerText}</p>
+                    <div style="background-color: #f7fafc; padding: 0.5rem; border-left: 4px solid #4299e1; margin-top: 0.5rem;">
+                        <p style="margin-bottom: 0.2rem;"><strong>Explanation:</strong></p>
+                        <p style="font-size: 0.9rem; color: #4a5568;">${q.explanation}</p>
+                    </div>
+                    ${q.relatedFacts && q.relatedFacts.length > 0 ? `
+                    <div style="background-color: #fffaf0; padding: 0.5rem; border-left: 4px solid #ed8936; margin-top: 0.5rem;">
+                        <p style="margin-bottom: 0.2rem;"><strong>Related Facts:</strong></p>
+                        <ul style="font-size: 0.85rem; color: #744210; margin: 0; padding-left: 1.2rem;">
+                            ${q.relatedFacts.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                    </div>` : ''}
                 </div>
             `;
         });
@@ -393,6 +404,22 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
                                                 <span>{userAnswer}. {q.options[userAnswer as keyof typeof q.options]}</span>
                                                 {isCorrect ? <CheckCircleIcon /> : <XCircleIcon />}
                                             </>
+                                        )}
+                                    </div>
+                                    <div className="mt-4 space-y-3">
+                                        <div className="p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-md">
+                                            <p className="text-xs font-bold text-blue-800 mb-1 uppercase tracking-wider">Explanation:</p>
+                                            <p className="text-sm text-blue-700">{q.explanation}</p>
+                                        </div>
+                                        {q.relatedFacts && q.relatedFacts.length > 0 && (
+                                            <div className="p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-md">
+                                                <p className="text-xs font-bold text-amber-800 mb-1 uppercase tracking-wider">Related Facts:</p>
+                                                <ul className="list-disc list-inside space-y-1">
+                                                    {q.relatedFacts.map((fact, factIndex) => (
+                                                        <li key={factIndex} className="text-xs text-amber-800">{fact}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
                                         )}
                                     </div>
                                 </div>

@@ -67,6 +67,14 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                     <li>D: ${q.options.D}</li>
                 </ul>
                 <p><strong>Answer:</strong> ${q.answer}</p>
+                <p><strong>Explanation:</strong> ${q.explanation}</p>
+                ${q.relatedFacts && q.relatedFacts.length > 0 ? `
+                <div style="margin-top: 0.5rem; background: #fffbeb; padding: 0.5rem; border-left: 3px solid #f59e0b;">
+                    <p style="margin-bottom: 0.3rem;"><strong>Related Facts:</strong></p>
+                    <ul style="margin: 0; padding-left: 1.2rem;">
+                        ${q.relatedFacts.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </div>` : ''}
             </div>
         `;
     });

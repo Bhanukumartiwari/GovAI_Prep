@@ -1,8 +1,10 @@
 import React from 'react';
+import { Page } from '../App';
 import { DoubtSolver } from '../components/DoubtSolver';
 import { GoalsIcon } from '../components/icons/GoalsIcon';
 import { QuizIcon } from '../components/icons/QuizIcon';
 import { ChatIcon } from '../components/icons/ChatIcon';
+import { BackIcon } from '../components/icons/BackIcon';
 
 const features = [
     {
@@ -25,9 +27,20 @@ const features = [
     }
 ];
 
-export const DashboardPage: React.FC = () => {
+interface DashboardPageProps {
+    onNavigate: (page: Page) => void;
+}
+
+export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <button
+                onClick={() => onNavigate('home')}
+                className="flex items-center gap-2 text-blue-600 font-semibold hover:underline mb-6"
+            >
+                <BackIcon />
+                Back to Home
+            </button>
             <div className="mb-8">
                 <h1 className="text-4xl font-bold text-gray-900">Welcome back, Aspirant!</h1>
                 <p className="text-lg text-gray-600 mt-2">Let's make today productive. Here's your dashboard.</p>

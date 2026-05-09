@@ -5,6 +5,7 @@ import { GeneratorIcon } from '../components/icons/GeneratorIcon';
 import { SimulatorIcon } from '../components/icons/SimulatorIcon';
 import { AnalyticsIcon } from '../components/icons/AnalyticsIcon';
 import { InfoIcon } from '../components/icons/InfoIcon';
+import { BackIcon } from '../components/icons/BackIcon';
 
 interface ToolsPageProps {
     onNavigate: (page: Page) => void;
@@ -46,7 +47,14 @@ const tools = [
 export const ToolsPage: React.FC<ToolsPageProps> = ({ onNavigate }) => {
     return (
         <div className="bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <button
+                    onClick={() => onNavigate('dashboard')}
+                    className="flex items-center gap-2 text-blue-600 font-semibold hover:underline mb-6"
+                >
+                    <BackIcon />
+                    Back to Dashboard
+                </button>
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-gray-900">Preparation Tools</h1>
                     <p className="mt-3 text-xl text-gray-500">Leverage AI to supercharge your study sessions.</p>
