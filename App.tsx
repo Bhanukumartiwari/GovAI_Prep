@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { AdsterraBannerOne, AdsterraBannerTwo } from './components/AdsterraAds';
 import { HomePage } from './pages/HomePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ToolsPage } from './pages/ToolsPage';
@@ -69,6 +70,10 @@ const App: React.FC = () => {
         </AnimatePresence>
       </main>
       <Footer onNavigate={setCurrentPage} />
+      <div className="container mx-auto px-4 pb-8">
+        <AdsterraBannerOne />
+        <AdsterraBannerTwo />
+      </div>
     </div>
   );
 };
