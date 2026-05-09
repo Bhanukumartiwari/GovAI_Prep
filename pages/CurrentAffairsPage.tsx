@@ -132,39 +132,39 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
             </button>
         </div>
 
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10">
                 <div className="max-w-2xl">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display mb-4">
                         Daily <span className="text-blue-600">Briefing.</span>
                     </h1>
-                    <p className="text-xl text-gray-500 font-medium leading-relaxed">
+                    <p className="text-base text-gray-500 font-medium leading-relaxed">
                         Curated intelligence report mapping global events to your specific exam syllabus.
                     </p>
                 </div>
-                <button onClick={handleDownloadReport} className="flex-shrink-0 flex items-center gap-2 px-8 py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-black transition-all active:scale-95 text-sm uppercase tracking-widest whitespace-nowrap">
+                <button onClick={handleDownloadReport} className="flex-shrink-0 flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-black transition-all active:scale-95 text-xs uppercase tracking-widest whitespace-nowrap">
                     <DownloadIcon /> Export Intelligence
                 </button>
             </header>
 
-            <div className="sticky top-20 z-40 bg-[#FBFCFD]/80 backdrop-blur-md -mx-4 px-4 py-4 mb-12 border-b border-gray-100">
-                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="sticky top-20 z-40 bg-[#FBFCFD]/80 backdrop-blur-md -mx-4 px-4 py-3 mb-10 border-b border-gray-100">
+                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-3">
                     <div className="md:col-span-6 relative">
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Filter by topic (e.g. Finance Commission)..."
-                            className={formInputClass}
+                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold placeholder:text-gray-300 uppercase tracking-widest"
                         />
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
                     </div>
                     <div className="md:col-span-3">
                         <select
                             value={exam}
                             onChange={(e) => setExam(e.target.value)}
-                            className={formInputClass}
+                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest"
                         >
                             <option>All Exams</option>
                             <option>UPSC</option>
@@ -175,7 +175,7 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                     <div className="md:col-span-3">
                          <button
                             type="submit"
-                            className="w-full h-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-xs uppercase tracking-[0.2em]"
+                            className="w-full h-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-[10px] font-black uppercase tracking-[0.2em]"
                         >
                             Update Feed
                         </button>
@@ -185,15 +185,15 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
 
             <div className="relative min-h-[600px]">
                 {isLoading && !isRegenerating ? (
-                    <div className="flex flex-col items-center justify-center py-40">
+                    <div className="flex flex-col items-center justify-center py-32">
                         <Loader />
-                        <h3 className="mt-8 text-2xl font-bold font-display text-gray-900">Synchronizing Feed...</h3>
-                        <p className="text-gray-400 font-medium mt-2">Connecting to world news intelligence desk.</p>
+                        <h3 className="mt-6 text-xl font-bold font-display text-gray-900 uppercase tracking-widest">Synchronizing...</h3>
+                        <p className="text-gray-400 font-medium mt-2 text-sm">Connecting to world news intelligence desk.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
+                    <div className="grid grid-cols-1 gap-8">
                         {newsItems.map((item, index) => (
-                            <div key={index} className="bg-white rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 p-8 md:p-12 group">
+                            <div key={index} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 p-8 group">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     <div className="md:w-1/4">
                                         <div className="sticky top-44">
@@ -201,35 +201,35 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                                                 <span className="w-4 h-0.5 bg-blue-600"></span>
                                                 {item.category}
                                             </div>
-                                            <div className="text-3xl font-black text-gray-100 group-hover:text-gray-200 transition-colors pointer-events-none mb-4">
+                                            <div className="text-2xl font-black text-gray-100 group-hover:text-gray-200 transition-colors pointer-events-none mb-4">
                                                 {item.date}
                                             </div>
                                             <div className="hidden md:flex flex-col gap-2">
-                                                <div className="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                                                <div className="w-full h-1 bg-gray-50 rounded-full overflow-hidden">
                                                     <div className="h-full bg-blue-600/20 w-3/4"></div>
                                                 </div>
-                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Relevance: High</span>
+                                                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Priority: High</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="md:w-3/4">
-                                        <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 font-display leading-tight group-hover:text-blue-600 transition-colors">
+                                        <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 font-display leading-tight group-hover:text-blue-600 transition-colors">
                                             {item.title}
                                         </h3>
-                                        <p className="text-xl text-gray-500 font-semibold mb-8 leading-relaxed">
+                                        <p className="text-base text-gray-500 font-medium mb-6 leading-relaxed">
                                             {item.summary}
                                         </p>
                                         
                                         <div className="grid md:grid-cols-2 gap-8">
                                             <div>
-                                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">In-Depth Analysis</h4>
-                                                <p className="text-gray-600 leading-relaxed font-medium">
+                                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Strategic Analysis</h4>
+                                                <p className="text-sm text-gray-600 leading-relaxed font-medium">
                                                     {item.detailedAnalysis}
                                                 </p>
                                             </div>
-                                            <div className="bg-blue-50 p-8 rounded-[32px] border border-blue-100 self-start">
-                                                <h4 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-4">Strategic Relevance</h4>
-                                                <p className="text-sm text-blue-900 font-bold italic leading-relaxed">
+                                            <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-50 self-start">
+                                                <h4 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3">Exam Focus</h4>
+                                                <p className="text-xs text-blue-900 font-bold italic leading-relaxed">
                                                     "{item.examRelevance}"
                                                 </p>
                                             </div>
@@ -242,9 +242,9 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                 )}
                 
                 {error && (
-                    <div className="text-center py-20 bg-red-50 text-red-700 rounded-[40px] border border-red-100">
-                        <p className="text-xl font-bold">{error}</p>
-                        <button onClick={handleRegenerate} className="mt-6 px-8 py-3 bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200">Retry Manual Sync</button>
+                    <div className="text-center py-20 bg-red-50 text-red-700 rounded-2xl border border-red-100">
+                        <p className="text-lg font-bold">{error}</p>
+                        <button onClick={handleRegenerate} className="mt-5 px-7 py-3 bg-red-600 text-white rounded-lg font-bold shadow-md shadow-red-200 text-xs">Retry Sync</button>
                     </div>
                 )}
             </div>

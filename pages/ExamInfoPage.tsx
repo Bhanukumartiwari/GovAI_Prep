@@ -128,33 +128,33 @@ export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
             </button>
         </div>
 
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="max-w-2xl">
-                <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display mb-4">
                     Exam <span className="text-blue-600">Protocol.</span>
                 </h1>
-                <p className="text-xl text-gray-500 font-medium leading-relaxed">
-                    Accessing centralized intelligence archives for competitive examinations. Stay synchronized with official patterns and syllabi.
+                <p className="text-base text-gray-500 font-medium leading-relaxed">
+                    Accessing centralized intelligence archives for competitive examinations.
                 </p>
             </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
             {/* Control Panel */}
             <div className="lg:col-span-4">
-                <div className="bg-gray-900 rounded-[40px] p-8 md:p-10 shadow-2xl relative overflow-hidden group">
+                <div className="bg-gray-900 rounded-2xl p-7 md:p-8 shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl -mr-16 -mt-16 opacity-20 group-hover:opacity-40 transition-opacity"></div>
                     
                     <form onSubmit={handleSubmit} className="relative z-10">
-                        <div className="mb-8">
-                            <label htmlFor="exam-input" className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-4 block">Archive Directory</label>
+                        <div className="mb-6">
+                            <label htmlFor="exam-input" className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mb-4 block">Archive Directory</label>
                             <input
                                 list="exams"
                                 id="exam-input"
                                 name="exam"
                                 value={exam}
                                 onChange={(e) => setExam(e.target.value)}
-                                className="w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-white focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-sm font-bold placeholder:text-gray-500 appearance-none"
+                                className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-xs font-bold placeholder:text-gray-500 appearance-none uppercase tracking-widest"
                                 placeholder="Search exams..."
                                 required
                             />
@@ -166,20 +166,20 @@ export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-5 bg-white text-gray-900 font-black rounded-2xl shadow-xl hover:bg-blue-500 hover:text-white transition-all active:scale-95 disabled:opacity-50 text-xs uppercase tracking-[0.2em]"
+                            className="w-full py-4 bg-white text-gray-900 font-bold rounded-xl shadow-lg hover:bg-blue-500 hover:text-white transition-all active:scale-95 disabled:opacity-50 text-[10px] uppercase tracking-[0.2em]"
                         >
                             {isLoading ? 'Querying...' : 'Fetch Intelligence'}
                         </button>
                     </form>
 
-                    <div className="mt-12">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-6 block">Quick Access Cache</label>
+                    <div className="mt-10">
+                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-5 block">Quick Access</label>
                         <div className="grid grid-cols-1 gap-2">
                             {popularExams.slice(0, 6).map((ex) => (
                                 <button
                                     key={ex}
                                     onClick={() => fetchInfo(ex)}
-                                    className={`text-left p-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${exam === ex ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                                    className={`text-left p-3.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${exam === ex ? 'bg-blue-600 text-white shadow-md' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
                                 >
                                     {ex}
                                 </button>
@@ -192,25 +192,25 @@ export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
             {/* Content Area */}
             <div className="lg:col-span-8">
                 {isLoading && (
-                    <div className="bg-white rounded-[40px] border border-gray-100 p-20 flex flex-col items-center justify-center text-center shadow-sm">
+                    <div className="bg-white rounded-2xl border border-gray-100 p-16 flex flex-col items-center justify-center text-center shadow-sm">
                         <Loader />
-                        <h3 className="mt-8 text-2xl font-bold font-display text-gray-900">Synchronizing Data...</h3>
-                        <p className="text-gray-400 font-medium max-w-xs">Accessing official archives and synthesizing pattern intelligence.</p>
+                        <h3 className="mt-6 text-xl font-bold font-display text-gray-900 uppercase tracking-widest">Synchronizing...</h3>
+                        <p className="text-gray-400 font-medium text-sm mt-2">Accessing official archives and synthesizing intelligence.</p>
                     </div>
                 )}
 
                 {!isLoading && !info && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {[
                             { title: 'Pattern Lab', desc: 'Detailed breakdown of examination structures and marking schemes.', icon: '01' },
                             { title: 'Syllabus Map', desc: 'Every topic categorized by priority and exam frequency.', icon: '02' },
                             { title: 'Timeline', desc: 'Projected dates and notification cycles synchronized via AI.', icon: '03' },
                             { title: 'Strategy', desc: 'Subject-wise preparation blueprints for optimal scoring.', icon: '04' }
                         ].map((feature, idx) => (
-                            <div key={idx} className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 group">
-                                <div className="text-4xl font-black text-gray-100 group-hover:text-blue-50 text-right mb-4 transition-colors font-display tracking-tighter">{feature.icon}</div>
-                                <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4">{feature.title}</h3>
-                                <p className="text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
+                            <div key={idx} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 group">
+                                <div className="text-3xl font-bold text-gray-100 group-hover:text-blue-50 text-right mb-2 transition-colors font-display tracking-tighter">{feature.icon}</div>
+                                <h3 className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-3">{feature.title}</h3>
+                                <p className="text-xs text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
                             </div>
                         ))}
                     </div>

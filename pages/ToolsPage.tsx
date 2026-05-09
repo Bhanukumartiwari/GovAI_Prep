@@ -73,13 +73,13 @@ export const ToolsPage: React.FC<ToolsPageProps> = ({ onNavigate }) => {
                     </button>
                 </div>
 
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
                     <div className="max-w-2xl">
-                        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display mb-4">
                             AI Power <span className="text-blue-600">Toolkit.</span>
                         </h1>
-                        <p className="text-xl text-gray-500 font-medium leading-relaxed">
-                            A curated suite of specialized AI agents designed to handle the heavy lifting of your preparation journey.
+                        <p className="text-base text-gray-500 font-medium leading-relaxed">
+                            A curated suite of specialized AI agents designed to optimize your preparation journey.
                         </p>
                     </div>
                 </div>
@@ -88,40 +88,40 @@ export const ToolsPage: React.FC<ToolsPageProps> = ({ onNavigate }) => {
                     {tools.map((tool, index) => (
                         <div 
                             key={index} 
-                            className="group bg-white p-10 rounded-[40px] shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 border border-gray-100 flex flex-col cursor-pointer relative overflow-hidden"
+                            className="group bg-white p-7 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border border-gray-100 flex flex-col cursor-pointer relative overflow-hidden"
                             onClick={() => onNavigate(tool.page)}
                         >
-                            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                 </div>
                             </div>
 
-                            <div className="w-16 h-16 bg-gray-50 group-hover:bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-8 transition-colors duration-300">
-                                <div className="scale-125">{tool.icon}</div>
+                            <div className="w-12 h-12 bg-gray-50 group-hover:bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-6 transition-colors duration-300">
+                                <div className="scale-110">{tool.icon}</div>
                             </div>
                             
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4 font-display group-hover:text-blue-600 transition-colors">{tool.title}</h3>
-                            <p className="text-gray-500 font-medium leading-relaxed mb-8 flex-grow">{tool.description}</p>
+                            <h3 className="text-lg font-bold text-gray-900 mb-2 font-display group-hover:text-blue-600 transition-colors">{tool.title}</h3>
+                            <p className="text-xs text-gray-500 font-medium leading-relaxed mb-6 flex-grow">{tool.description}</p>
                             
-                            <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
-                                <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Status: Active</span>
-                                <span className="text-blue-600 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2">
-                                    Launch Agent <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                            <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Node Active</span>
+                                <span className="text-blue-600 text-xs font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5">
+                                    Launch Agent <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                                 </span>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-24 p-12 rounded-[48px] bg-gray-900 text-white flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl -ml-48 -mt-48"></div>
+                <div className="mt-20 p-10 rounded-2xl bg-gray-900 text-white flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -ml-32 -mt-32"></div>
                     <div className="relative z-10 max-w-xl text-center md:text-left">
-                        <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">Request a Custom Tool?</h2>
-                        <p className="text-gray-400 font-medium text-lg italic">"I wish I had a tool that could..."</p>
-                        <p className="text-gray-400 mt-2">Our community is the core of our development. Let us know what you need.</p>
+                        <h2 className="text-2xl md:text-3xl font-bold font-display mb-3">Request a Custom Tool?</h2>
+                        <p className="text-gray-400 font-medium text-sm italic">"I wish I had a tool that could..."</p>
+                        <p className="text-gray-400 mt-2 text-sm">Let us know what specialized agent you need for your preparation.</p>
                     </div>
-                    <button className="relative z-10 px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl transition-transform hover:scale-105 active:scale-95 shadow-xl">
+                    <button className="relative z-10 px-8 py-4 bg-white text-gray-900 text-xs font-bold rounded-xl transition-transform hover:scale-105 active:scale-95 shadow-xl">
                         Submit Feature Request
                     </button>
                 </div>

@@ -243,30 +243,30 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
                     </button>
                 </div>
 
-                <header className="max-w-2xl mb-16">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
+                <header className="max-w-2xl mb-12">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display mb-4">
                         Test <span className="text-blue-600">Simulator.</span>
                     </h1>
-                    <p className="text-xl text-gray-500 font-medium leading-relaxed">
-                        Precision-engineered adaptive testing environment to simulate real examination pressure.
+                    <p className="text-base text-gray-500 font-medium leading-relaxed">
+                        Adaptive testing environment designed to simulate real examination pressure.
                     </p>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {exams.map(exam => (
-                        <div key={exam.id} className="relative group overflow-hidden bg-white rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500">
-                            <div className="p-8 md:p-10 flex flex-col h-full">
-                                <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                                    <span className="w-4 h-0.5 bg-blue-600"></span>
+                        <div key={exam.id} className="relative group overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300">
+                            <div className="p-7 flex flex-col h-full">
+                                <div className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                                    <span className="w-4 h-[1px] bg-blue-600"></span>
                                     Simulation Profile
                                 </div>
-                                <h2 className="text-3xl font-black text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">{exam.name}</h2>
-                                <p className="text-gray-500 font-medium leading-relaxed flex-grow">
+                                <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{exam.name}</h2>
+                                <p className="text-xs text-gray-400 font-medium leading-relaxed flex-grow">
                                     {exam.description}
                                 </p>
                                 <button 
                                     onClick={() => handleExamSelect(exam)} 
-                                    className="mt-10 w-full py-5 bg-gray-900 text-white font-bold rounded-2xl shadow-xl group-hover:bg-blue-600 transition-all active:scale-95 text-xs uppercase tracking-widest"
+                                    className="mt-8 w-full py-3.5 bg-gray-900 text-white text-xs font-bold rounded-xl shadow-lg group-hover:bg-blue-600 transition-all active:scale-95 uppercase tracking-widest"
                                 >
                                     Initiate Simulator
                                 </button>
@@ -342,78 +342,80 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
     if (testState === 'running' && activeTest) {
         const currentQuestion = activeTest.questions[currentQuestionIndex];
         return (
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
-                <div className="bg-white rounded-[40px] border border-gray-100 shadow-2xl overflow-hidden">
-                    <div className="bg-gray-900 px-8 md:px-12 py-8 flex items-center justify-between">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-3xl">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+                    <div className="bg-gray-900 px-6 py-5 flex items-center justify-between">
                         <div>
-                            <div className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-1">Active Simulation</div>
-                            <h1 className="text-xl font-black text-white uppercase tracking-tight">{activeTest.name}</h1>
+                            <div className="text-[8px] font-bold text-blue-400 uppercase tracking-[0.2em] mb-0.5">Active Mission</div>
+                            <h1 className="text-sm font-bold text-white uppercase tracking-tight">{activeTest.name}</h1>
                         </div>
-                        <div className="flex items-center gap-4 bg-white/10 px-6 py-4 rounded-2xl backdrop-blur-md">
+                        <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md">
                             <div className="text-right">
-                                <div className="text-[8px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Time Remaining</div>
-                                <div className={`text-2xl font-black font-mono ${timeLeft < 60 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+                                <div className="text-[8px] font-bold text-blue-400 uppercase tracking-[0.1em]">Time Left</div>
+                                <div className={`text-lg font-bold font-mono leading-none ${timeLeft < 60 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
                                     {formatTime(timeLeft)}
                                 </div>
                             </div>
-                            <TimerIcon />
+                            <div className="text-blue-400 scale-75">
+                                <TimerIcon />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="w-full bg-gray-100 h-1.5">
+                    <div className="w-full bg-gray-100 h-1">
                         <div 
                             className="bg-blue-600 h-full transition-all duration-700 ease-out" 
                             style={{ width: `${((currentQuestionIndex + 1) / activeTest.questions.length) * 100}%` }}
                         ></div>
                     </div>
 
-                    <div className="p-8 md:p-16">
-                        <div className="mb-12">
-                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.4em] mb-6 block">Question {currentQuestionIndex + 1} of {activeTest.questions.length}</span>
-                            <h2 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight">
+                    <div className="p-8 md:p-10">
+                        <div className="mb-8">
+                            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-4 block">Question {currentQuestionIndex + 1} of {activeTest.questions.length}</span>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-snug">
                                 {currentQuestion.question}
                             </h2>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 mb-16">
+                        <div className="grid grid-cols-1 gap-3 mb-10">
                             {Object.entries(currentQuestion.options).map(([key, value]) => (
                                 <button 
                                     key={key} 
                                     onClick={() => handleAnswerSelect(currentQuestionIndex, key)}
-                                    className={`group flex items-center gap-6 p-6 md:p-8 rounded-[32px] border-2 transition-all text-left ${userAnswers[currentQuestionIndex] === key ? 'bg-blue-600 border-blue-600 shadow-xl shadow-blue-200' : 'bg-white border-gray-100 hover:border-blue-200'}`}
+                                    className={`group flex items-center gap-4 p-4 md:p-5 rounded-xl border transition-all text-left ${userAnswers[currentQuestionIndex] === key ? 'bg-blue-600 border-blue-600 shadow-md shadow-blue-200' : 'bg-white border-gray-100 hover:border-blue-200'}`}
                                 >
-                                    <div className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center font-black transition-all ${userAnswers[currentQuestionIndex] === key ? 'bg-white text-blue-600' : 'bg-gray-50 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600'}`}>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${userAnswers[currentQuestionIndex] === key ? 'bg-white text-blue-600' : 'bg-gray-50 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600'}`}>
                                         {key}
                                     </div>
-                                    <span className={`text-lg md:text-xl font-bold transition-all ${userAnswers[currentQuestionIndex] === key ? 'text-white' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                                    <span className={`text-sm font-bold transition-all ${userAnswers[currentQuestionIndex] === key ? 'text-white' : 'text-gray-600 group-hover:text-gray-900'}`}>
                                         {value}
                                     </span>
                                 </button>
                             ))}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
+                        <div className="flex flex-row justify-between items-center gap-4">
                             <button 
                                 onClick={() => setCurrentQuestionIndex(p => Math.max(0, p - 1))} 
                                 disabled={currentQuestionIndex === 0} 
-                                className="w-full sm:w-auto px-10 py-5 font-black text-gray-400 uppercase tracking-[0.2em] text-[10px] hover:text-gray-900 transition-colors disabled:opacity-0"
+                                className="px-6 py-3 font-bold text-gray-400 uppercase tracking-widest text-[10px] hover:text-gray-900 transition-colors disabled:opacity-0"
                             >
-                                Previous Objective
+                                Previous
                             </button>
                             
                             {currentQuestionIndex < activeTest.questions.length - 1 ? (
                                 <button 
                                     onClick={() => setCurrentQuestionIndex(p => Math.min(activeTest.questions.length - 1, p + 1))} 
-                                    className="w-full sm:w-auto px-12 py-6 bg-blue-600 text-white font-black rounded-3xl shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-[0.2em] text-[10px]"
+                                    className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-widest text-[10px]"
                                 >
                                     Next Phase
                                 </button>
                             ) : (
                                 <button 
                                     onClick={handleSubmit} 
-                                    className="w-full sm:w-auto px-12 py-6 bg-gray-900 text-white font-black rounded-3xl shadow-2xl hover:bg-black transition-all active:scale-95 uppercase tracking-[0.2em] text-[10px]"
+                                    className="px-8 py-3 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-black transition-all active:scale-95 uppercase tracking-widest text-[10px]"
                                 >
-                                    Submit Final Results
+                                    Finish Test
                                 </button>
                             )}
                         </div>
@@ -425,113 +427,110 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
     
     if (testState === 'finished' && activeTest) {
         return (
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-5xl">
-                <header className="text-center mb-16">
-                    <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.5em] mb-4">Post-Mission Debriefing</div>
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight font-display">Performance <span className="text-blue-600">Metrics.</span></h1>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
+                <header className="text-center mb-10">
+                    <div className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.4em] mb-3">Post-Mission Debriefing</div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display">Performance <span className="text-blue-600">Metrics.</span></h1>
                 </header>
 
-                <div className="bg-white rounded-[40px] border border-gray-100 shadow-2xl p-8 md:p-16 mb-12 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-xl p-8 md:p-10 mb-10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl -mr-24 -mt-24 opacity-50"></div>
                     
-                    <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+                    <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
                         <div className="flex-shrink-0 relative">
-                            <svg className="w-48 h-48 transform -rotate-90">
-                                <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-gray-50" />
+                            <svg className="w-32 h-32 transform -rotate-90">
+                                <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-50" />
                                 <circle 
-                                    cx="96" 
-                                    cy="96" 
-                                    r="88" 
+                                    cx="64" 
+                                    cy="64" 
+                                    r="58" 
                                     stroke="currentColor" 
-                                    strokeWidth="12" 
+                                    strokeWidth="8" 
                                     fill="transparent" 
-                                    strokeDasharray={2 * Math.PI * 88}
-                                    strokeDashoffset={2 * Math.PI * 88 * (1 - results.score / 100)}
+                                    strokeDasharray={2 * Math.PI * 58}
+                                    strokeDashoffset={2 * Math.PI * 58 * (1 - results.score / 100)}
                                     strokeLinecap="round"
                                     className={`${results.score >= 50 ? 'text-blue-600' : 'text-red-500'} transition-all duration-1000`} 
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className={`text-5xl font-black ${results.score >= 50 ? 'text-blue-600' : 'text-red-500'}`}>{results.score}%</span>
-                                <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">Accuracy</span>
+                                <span className={`text-3xl font-bold ${results.score >= 50 ? 'text-blue-600' : 'text-red-500'}`}>{results.score}%</span>
+                                <span className="text-[7px] font-bold text-gray-400 uppercase tracking-[0.1em] mt-0.5">Accuracy</span>
                             </div>
                         </div>
 
                         <div className="flex-grow grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                            <div className="bg-gray-50 p-6 rounded-[32px] text-center border border-gray-100 hover:border-blue-100 transition-colors group">
-                                <div className="text-3xl font-black text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">{results.correct}</div>
-                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Validated</div>
+                            <div className="bg-gray-50 p-4 rounded-xl text-center border border-gray-100 hover:border-blue-100 transition-colors group">
+                                <div className="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{results.correct}</div>
+                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Correct</div>
                             </div>
-                            <div className="bg-gray-50 p-6 rounded-[32px] text-center border border-gray-100 hover:border-red-100 transition-colors group">
-                                <div className="text-3xl font-black text-gray-900 mb-1 group-hover:text-red-500 transition-colors">{results.incorrect}</div>
-                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Deviation</div>
+                            <div className="bg-gray-50 p-4 rounded-xl text-center border border-gray-100 hover:border-red-100 transition-colors group">
+                                <div className="text-2xl font-bold text-gray-900 group-hover:text-red-500 transition-colors">{results.incorrect}</div>
+                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Incorrect</div>
                             </div>
-                            <div className="bg-gray-50 p-6 rounded-[32px] text-center border border-gray-100 transition-colors">
-                                <div className="text-3xl font-black text-gray-900 mb-1">{results.unanswered}</div>
-                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Skipped</div>
+                            <div className="bg-gray-50 p-4 rounded-xl text-center border border-gray-100 transition-colors">
+                                <div className="text-2xl font-bold text-gray-900">{results.unanswered}</div>
+                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Skipped</div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-16 flex flex-wrap justify-center gap-4">
-                        <button onClick={() => handleStartTest(activeTest.name.split(': ')[1], activeTest.difficulty)} className="px-10 py-5 bg-blue-600 text-white font-bold rounded-2xl shadow-xl hover:bg-blue-700 transition-all active:scale-95 text-xs uppercase tracking-widest">Regenerate Simulation</button>
-                        <button onClick={handleDownloadResults} className="px-10 py-5 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-black transition-all active:scale-95 text-xs uppercase tracking-widest flex items-center gap-3">
-                            <DownloadIcon /> Export Report
+                    <div className="mt-10 flex flex-wrap justify-center gap-3">
+                        <button onClick={() => handleStartTest(activeTest.name.split(': ')[1], activeTest.difficulty)} className="px-6 py-3 bg-blue-600 text-white text-[10px] font-bold rounded-xl shadow-md hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-widest">Retry Simulation</button>
+                        <button onClick={handleDownloadResults} className="px-6 py-3 bg-gray-900 text-white text-[10px] font-bold rounded-xl shadow-md hover:bg-black transition-all active:scale-95 uppercase tracking-widest flex items-center gap-2">
+                            <DownloadIcon /> Export
                         </button>
-                        <button onClick={handleReset} className="px-10 py-5 bg-white text-gray-400 border border-gray-100 font-bold rounded-2xl hover:bg-gray-100 transition-all active:scale-95 text-xs uppercase tracking-widest">Mission Control</button>
+                        <button onClick={handleReset} className="px-6 py-3 bg-white text-gray-400 border border-gray-100 text-[10px] font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-95 uppercase tracking-widest">Dashboard</button>
                     </div>
                 </div>
 
-                <div className="space-y-12 mb-20">
-                    <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight ml-4 flex items-center gap-4">
-                        <span className="w-12 h-1 bg-blue-600 rounded-full"></span>
+                <div className="space-y-10 mb-20">
+                    <h2 className="text-xl font-bold text-gray-900 uppercase tracking-tight flex items-center gap-3">
+                        <span className="w-10 h-[2px] bg-blue-600 rounded-full"></span>
                         Module Deep-Dive
                     </h2>
                     {activeTest.questions.map((q, index) => {
                         const userAnswer = userAnswers[index];
                         const isCorrect = userAnswer === q.answer;
                         return (
-                            <div key={index} className="bg-white rounded-[40px] border border-gray-100 shadow-sm hover:shadow-lg transition-all p-8 md:p-12">
+                            <div key={index} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all p-6 md:p-8">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     <div className="md:w-3/4">
-                                        <div className="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em] mb-4">Objective {index + 1}</div>
-                                        <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-8 leading-snug">
+                                        <div className="text-[8px] font-bold text-gray-300 uppercase tracking-[0.3em] mb-4">Objective {index + 1}</div>
+                                        <h3 className="text-base md:text-lg font-bold text-gray-900 mb-6 leading-snug">
                                             {q.question}
                                         </h3>
                                         
-                                        <div className="grid grid-cols-1 gap-3 mb-8">
+                                        <div className="grid grid-cols-1 gap-2 mb-6">
                                             {Object.entries(q.options).map(([key, value]) => (
                                                 <div 
                                                     key={key}
-                                                    className={`p-4 rounded-2xl border flex items-center gap-4 transition-all ${q.answer === key ? 'bg-green-50 border-green-200' : userAnswer === key ? 'bg-red-50 border-red-200' : 'bg-gray-50/50 border-gray-50'}`}
+                                                    className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${q.answer === key ? 'bg-green-50 border-green-200' : userAnswer === key ? 'bg-red-50 border-red-200' : 'bg-gray-50/50 border-gray-50'}`}
                                                 >
-                                                    <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${q.answer === key ? 'bg-green-600 text-white' : userAnswer === key ? 'bg-red-500 text-white' : 'bg-white text-gray-400'}`}>{key}</span>
-                                                    <span className={`font-bold ${q.answer === key ? 'text-green-900' : userAnswer === key ? 'text-red-900' : 'text-gray-500'}`}>{value}</span>
+                                                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs ${q.answer === key ? 'bg-green-600 text-white' : userAnswer === key ? 'bg-red-500 text-white' : 'bg-white text-gray-400'}`}>{key}</span>
+                                                    <span className={`text-xs font-bold ${q.answer === key ? 'text-green-900' : userAnswer === key ? 'text-red-900' : 'text-gray-500'}`}>{value}</span>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        <div className="bg-blue-50/50 p-8 rounded-[32px] border border-blue-50 relative">
-                                            <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Tactical Intelligence</div>
-                                            <p className="text-gray-600 font-medium leading-relaxed italic pr-12">
+                                        <div className="bg-blue-50/30 p-5 rounded-xl border border-blue-50 relative">
+                                            <div className="text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em] mb-2">Tactical Intelligence</div>
+                                            <p className="text-xs text-gray-500 font-medium leading-relaxed italic pr-10">
                                                 {q.explanation}
                                             </p>
-                                            <div className="absolute top-8 right-8 text-blue-100">
-                                                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 13.1216 16 12.017 16V16C10.9124 16 10.017 16.8954 10.017 18V21H4.01701V11C4.01701 10.4477 4.46473 10 5.01701 10H19.017C19.5693 10 20.017 10.4477 20.017 11V21H14.017Z" /></svg>
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="md:w-1/4">
-                                        <div className={`p-8 rounded-[32px] text-center flex flex-col items-center justify-center h-full transition-all ${isCorrect ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
-                                            <div className="mb-4">
+                                        <div className={`p-6 rounded-2xl text-center flex flex-col items-center justify-center h-full transition-all ${isCorrect ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                                            <div className="mb-3 scale-75">
                                                 {isCorrect ? (
-                                                    <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    <CheckCircleIcon />
                                                 ) : (
-                                                    <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    <XCircleIcon />
                                                 )}
                                             </div>
-                                            <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">Status</div>
-                                            <div className="text-xl font-black uppercase tracking-tight">{isCorrect ? 'VALID' : 'FAILED'}</div>
+                                            <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-1">Status</div>
+                                            <div className="text-lg font-bold uppercase tracking-tight leading-none">{isCorrect ? 'VALID' : 'FAILED'}</div>
                                         </div>
                                     </div>
                                 </div>
