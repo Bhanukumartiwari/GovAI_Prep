@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { CopyIcon } from './icons/CopyIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { LightbulbIcon } from './icons/LightbulbIcon';
@@ -86,7 +87,7 @@ export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
         </div>
       </div>
       <div className="markdown-body">
-        <ReactMarkdown>{answer}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
       </div>
     </div>
   );

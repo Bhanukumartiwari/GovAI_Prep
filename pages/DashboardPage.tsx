@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page } from '../App';
+import { Page, Activity } from '../App';
 import { DoubtSolver } from '../components/DoubtSolver';
 import { GoalsIcon } from '../components/icons/GoalsIcon';
 import { QuizIcon } from '../components/icons/QuizIcon';
@@ -29,9 +29,12 @@ const features = [
 
 interface DashboardPageProps {
     onNavigate: (page: Page) => void;
+    activities: Activity[];
 }
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate, activities }) => {
+    const lastThreeActivities = activities.slice(0, 3);
+
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-7xl">
             <div className="flex items-center justify-between mb-10">
@@ -105,16 +108,40 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     ))}
                 </div>
 
-                <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white relative overflow-hidden flex flex-col justify-between group shadow-lg">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-                    <div className="relative z-10">
-                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200 mb-4">Exam Countdown</h4>
-                        <p className="text-3xl font-bold mb-1">42 Days</p>
-                        <p className="text-blue-100 text-xs font-medium">UPSC Prelims 2024</p>
+                <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white relative overflow-hidden flex flex-col justify-between group shadow-lg">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700"></div>
+                        <div className="relative z-10 text-center py-4">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200 mb-4">Exam Countdown</h4>
+                            <p className="text-3xl font-bold mb-1">42 Days</p>
+                            <p className="text-blue-100 text-xs font-medium">UPSC Prelims 2024</p>
+                        </div>
                     </div>
-                    <button onClick={() => onNavigate('exam-info')} className="relative z-10 w-full py-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-lg text-xs font-bold transition-all border border-white/10 mt-6">
-                        View Pattern
-                    </button>
+
+                    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                Recent Activity
+                            </h3>
+                        </div>
+                        {lastThreeActivities.length > 0 ? (
+                            <div className="space-y-4">
+                                {lastThreeActivities.map((activity) => (
+                                    <div key={activity.id} className="relative pl-4 border-l-2 border-gray-50">
+                                        <p className="text-xs font-bold text-gray-900 leading-snug">{activity.message}</p>
+                                        <p className="text-[10px] text-gray-400 mt-1 font-medium">
+                                            {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-4 text-center">
+                                <p className="text-xs font-medium text-gray-400 italic">No recent actions</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

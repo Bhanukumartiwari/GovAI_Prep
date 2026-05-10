@@ -8,6 +8,7 @@ import { generateStudyPlan, StudyPlanParams } from '../services/geminiService';
 
 interface StudyPlannerPageProps {
   onNavigate: (page: Page) => void;
+  onAction?: (message: string, type?: string) => void;
 }
 
 // Helper to convert simple markdown to HTML for printing
@@ -21,7 +22,7 @@ const markdownToHtml = (text: string): string => {
         .replace(/\n/g, '<br />');
 };
 
-export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }) => {
+export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, onAction }) => {
   const [formData, setFormData] = useState<StudyPlanParams>({
     exam: 'UPSC Civil Services',
     subjects: 'History, Geography, Polity, Economy, Science & Tech, Current Affairs',
@@ -49,6 +50,9 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }
     try {
         const result = await generateStudyPlan(formData);
         setPlan(result);
+        if (onAction) {
+          onAction(`Updated study plan for ${formData.exam}`, 'planner');
+        }
     } catch (err: any) {
         setError(err?.message || 'Failed to generate the study plan. Please try again later.');
         console.error(err);

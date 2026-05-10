@@ -6,12 +6,14 @@ import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { Loader } from '../components/Loader';
 import { QuizDisplay } from '../components/QuizDisplay';
 import { generateMcqQuiz, QuizResponse } from '../services/geminiService';
+import { XCircleIcon } from '../components/icons/XCircleIcon';
 
 interface QuestionGeneratorPageProps {
   onNavigate: (page: Page) => void;
+  onAction?: (message: string, type?: string) => void;
 }
 
-export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ onNavigate }) => {
+export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ onNavigate, onAction }) => {
   const [topic, setTopic] = useState('Indian History');
   const [exam, setExam] = useState('UPSC');
   const [difficulty, setDifficulty] = useState('Medium');
@@ -31,6 +33,9 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
     try {
       const result = await generateMcqQuiz(topic, count, exam, difficulty);
       setQuiz(result);
+      if (onAction) {
+        onAction(`Generated a ${count}-question quiz on ${topic} (${exam})`, 'quiz');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       setQuiz(null); // Clear quiz on error

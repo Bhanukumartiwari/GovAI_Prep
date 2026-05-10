@@ -37,9 +37,10 @@ interface ActiveTest {
 
 interface MockTestsPageProps {
     onNavigate: (page: Page) => void;
+    onAction?: (message: string, type?: string) => void;
 }
 
-export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
+export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onAction }) => {
     const [testState, setTestState] = useState<TestState>('selection');
     const [selectedExam, setSelectedExam] = useState<(typeof exams[0]) | null>(null);
     const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
@@ -73,7 +74,10 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
 
         setResults({ score, correct, incorrect, unanswered });
         setTestState('finished');
-    }, [activeTest, userAnswers]);
+        if (onAction) {
+            onAction(`Completed mock test: ${activeTest.name} with score ${score}%`, 'test');
+        }
+    }, [activeTest, userAnswers, onAction]);
     
     useEffect(() => {
         if (testState !== 'running') return;
@@ -114,6 +118,9 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
             setCurrentQuestionIndex(0);
             setUserAnswers({});
             setTestState('running');
+            if (onAction) {
+                onAction(`Started mock test on ${subject} (${selectedExam.name})`, 'test');
+            }
         } catch (err: any) {
             setError(err?.message || 'Failed to generate the test. Please try again.');
             setTestState('subject_selection'); // Go back on error

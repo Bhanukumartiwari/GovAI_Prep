@@ -32,6 +32,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                         <ul className="space-y-4">
                            <li><button onClick={() => onNavigate('exam-info')} className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">Exam Patterns</button></li>
                            <li><button onClick={() => onNavigate('current-affairs')} className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">Daily Briefing</button></li>
+                           <li><button onClick={() => onNavigate('blog')} className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">The Editorial</button></li>
                         </ul>
                     </div>
                     <div>

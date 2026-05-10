@@ -13,6 +13,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
         { page: 'dashboard', label: 'Command' },
         { page: 'tools', label: 'Arsenal' },
         { page: 'current-affairs', label: 'Briefing' },
+        { page: 'blog', label: 'Editorial' },
         { page: 'community', label: 'Network' },
     ];
 

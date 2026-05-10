@@ -9,9 +9,10 @@ import { BackIcon } from '../components/icons/BackIcon';
 
 interface CurrentAffairsPageProps {
     onNavigate: (page: Page) => void;
+    onAction?: (message: string, type?: string) => void;
 }
 
-export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNavigate }) => {
+export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNavigate, onAction }) => {
     const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [date, setDate] = useState('');
@@ -28,11 +29,14 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
         try {
             const data = await getCurrentAffairs(topic, searchDate, examFilter);
             setNewsItems(data.articles);
+            if (onAction && topic !== 'Latest National News') {
+                onAction(`Searched current affairs for "${topic}"`, 'news');
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred');
             setNewsItems([]);
         }
-    }, []);
+    }, [onAction]);
 
     useEffect(() => {
         const loadInitialNews = async () => {

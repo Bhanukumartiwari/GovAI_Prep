@@ -1,9 +1,11 @@
 import React from 'react';
 
-export const XCircleIcon: React.FC<{className?: string}> = ({ className = "h-5 w-5 text-red-500" }) => (
+export const XCircleIcon: React.FC<{className?: string, size?: number}> = ({ className = "text-red-500", size = 20 }) => (
     <svg 
         xmlns="http://www.w3.org/2000/svg" 
         className={className} 
+        width={size}
+        height={size}
         fill="none" 
         viewBox="0 0 24 24" 
         stroke="currentColor" 

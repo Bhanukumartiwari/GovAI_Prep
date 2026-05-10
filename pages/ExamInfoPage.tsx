@@ -8,6 +8,7 @@ import { getExamInfo } from '../services/geminiService';
 
 interface ExamInfoPageProps {
   onNavigate: (page: Page) => void;
+  onAction?: (message: string, type?: string) => void;
 }
 
 const popularExams = [
@@ -32,7 +33,7 @@ const markdownToHtml = (text: string): string => {
         .replace(/\n/g, '<br />');
 };
 
-export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
+export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate, onAction }) => {
   const [exam, setExam] = useState('UPSC Civil Services');
   const [info, setInfo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +54,9 @@ export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
     try {
       const result = await getExamInfo(targetExam);
       setInfo(result);
+      if (onAction) {
+        onAction(`Researched protocol for ${targetExam}`, 'info');
+      }
     } catch (err: any) {
       setError(err?.message || 'Intelligence retrieval failed. System retry recommended.');
       console.error(err);

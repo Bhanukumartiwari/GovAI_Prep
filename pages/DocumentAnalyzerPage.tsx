@@ -5,6 +5,7 @@ import { Loader } from '../components/Loader';
 import { analyzeDocument, generateQuestionsFromText, analyzeDocumentMultimodal, generateQuestionsFromMultimodal, QuizResponse } from '../services/geminiService';
 import { extractTextFromPdf, pdfToImages } from '../lib/pdfHelper';
 import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { QuizDisplay } from '../components/QuizDisplay';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { RefreshIcon } from '../components/icons/RefreshIcon';
@@ -314,8 +315,8 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
 
                                 <div className="relative">
                                     {activeTab === 'summary' && analysis && (
-                                        <div className="prose prose-blue max-w-none markdown-body">
-                                            <Markdown>{analysis}</Markdown>
+                                        <div className="markdown-body">
+                                            <Markdown remarkPlugins={[remarkGfm]}>{analysis}</Markdown>
                                         </div>
                                     )}
 
