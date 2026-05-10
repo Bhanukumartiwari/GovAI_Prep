@@ -22,8 +22,8 @@ export const DoubtSolver: React.FC = () => {
     try {
       const result = await getAnswerFromGemini(question);
       setAnswer(result);
-    } catch (err) {
-      setError('Failed to get an answer. Please check your connection and try again.');
+    } catch (err: any) {
+      setError(err?.message || 'Failed to get an answer. Please check your connection and try again.');
       console.error(err);
     } finally {
       setIsLoading(false);

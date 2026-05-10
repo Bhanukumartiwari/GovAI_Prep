@@ -114,8 +114,8 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
             setCurrentQuestionIndex(0);
             setUserAnswers({});
             setTestState('running');
-        } catch (err) {
-            setError('Failed to generate the test. Please try again.');
+        } catch (err: any) {
+            setError(err?.message || 'Failed to generate the test. Please try again.');
             setTestState('subject_selection'); // Go back on error
         } finally {
             setIsLoading(false);
@@ -298,6 +298,12 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate }) => {
                 </div>
 
                 <div className="bg-white rounded-[40px] border border-gray-100 shadow-lg p-8 md:p-12">
+                    {error && (
+                        <div className="mb-8 p-6 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-600 animate-in fade-in slide-in-from-top-4">
+                            <XCircleIcon />
+                            <div className="text-sm font-bold">{error}</div>
+                        </div>
+                    )}
                     <div className="mb-10">
                         <label className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Simulation Intensity</label>
                         <div className="grid grid-cols-3 gap-3">

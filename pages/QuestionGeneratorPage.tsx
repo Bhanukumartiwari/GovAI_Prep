@@ -220,8 +220,18 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                 </div>
             )}
             {error && (
-                <div className="text-center py-20 bg-red-50 text-red-700 rounded-[40px] border border-red-100">
-                    <p className="text-xl font-bold">{error}</p>
+                <div className="text-center py-16 px-8 bg-red-50/50 border border-red-100 rounded-[40px] animate-in fade-in zoom-in duration-500">
+                    <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <XCircleIcon size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 uppercase tracking-tight">Synthesis Interrupted</h3>
+                    <p className="text-gray-600 font-medium max-w-md mx-auto">{error}</p>
+                    <button 
+                        onClick={() => setError('')} 
+                        className="mt-8 px-6 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-red-600 transition-colors"
+                    >
+                        Dismiss Analysis
+                    </button>
                 </div>
             )}
             {quiz && (

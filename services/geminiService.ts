@@ -9,6 +9,37 @@ const getApiKey = () => {
   return key;
 };
 
+const formatAiError = (error: any): string => {
+  console.error('Gemini API Error:', error);
+  
+  // Try to parse error message if it's a JSON string (common with @google/genai 429s)
+  let message = error?.message || 'An unknown error occurred';
+  
+  try {
+    if (message.includes('{')) {
+      const start = message.indexOf('{');
+      const end = message.lastIndexOf('}') + 1;
+      const jsonPart = message.substring(start, end);
+      const parsed = JSON.parse(jsonPart);
+      
+      if (parsed.error) {
+        if (parsed.error.code === 429) {
+          return "AI usage limit reached for the free tier. Please wait about 30-60 seconds and try again. The free tier has a limit of 15 requests per minute.";
+        }
+        return parsed.error.message || message;
+      }
+    }
+  } catch (e) {
+    // If parsing fails, fall back to default logic
+  }
+
+  if (message.includes('429') || message.toLowerCase().includes('quota')) {
+    return "AI usage limit reached. Please wait about a minute before trying again.";
+  }
+
+  return message;
+};
+
 export const getAnswerFromGemini = async (question: string): Promise<string> => {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -29,10 +60,8 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
     });
     
     return response.text || 'The AI was unable to generate a response.';
-
   } catch (error: any) {
-    console.error('Error fetching answer from Gemini:', error);
-    return `An error occurred: ${error?.message || 'Failed to fetch answer.'}`;
+    throw new Error(formatAiError(error));
   }
 };
 
@@ -102,8 +131,7 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
         return JSON.parse(jsonStr) as QuizResponse;
 
     } catch (error: any) {
-        console.error('Error generating quiz:', error);
-        throw new Error(`Failed to generate quiz: ${error?.message}`);
+        throw new Error(`Failed to generate quiz: ${formatAiError(error)}`);
     }
 }
 
@@ -133,8 +161,7 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
 
     return response.text || 'Could not generate study plan.';
   } catch (error: any) {
-    console.error('Error generating study plan:', error);
-    return `Error: ${error?.message}`;
+    throw new Error(formatAiError(error));
   }
 };
 
@@ -178,8 +205,7 @@ export const getExamInfo = async (exam: string): Promise<string> => {
 
     return response.text || 'Information not available.';
   } catch (error: any) {
-    console.error('Error fetching exam info:', error);
-    return `Error: ${error?.message || 'Failed to fetch information.'}`;
+    throw new Error(formatAiError(error));
   }
 };
 
@@ -202,8 +228,7 @@ export const analyzeDocument = async (text: string): Promise<string> => {
 
         return response.text || 'Could not analyze document.';
     } catch (error: any) {
-        console.error('Error analyzing document:', error);
-        return `Error: ${error?.message}`;
+        throw new Error(formatAiError(error));
     }
 };
 
@@ -259,8 +284,7 @@ export const generateQuestionsFromText = async (text: string, count: number = 5)
         const jsonStr = response.text || '{"quiz": []}';
         return JSON.parse(jsonStr) as QuizResponse;
     } catch (error: any) {
-        console.error('Error generating questions from text:', error);
-        throw new Error(`Failed to generate questions: ${error?.message}`);
+        throw new Error(`Failed to generate questions: ${formatAiError(error)}`);
     }
 };
 
@@ -294,8 +318,7 @@ export const analyzeDocumentMultimodal = async (imageParts: { inlineData: { data
 
         return response.text || 'Could not analyze content.';
     } catch (error: any) {
-        console.error('Error analyzing document multimodal:', error);
-        return `Error: ${error?.message || 'Failed to analyze document.'}`;
+        throw new Error(formatAiError(error));
     }
 };
 
@@ -351,8 +374,7 @@ export const generateQuestionsFromMultimodal = async (imageParts: { inlineData: 
         const jsonStr = response.text || '{"quiz": []}';
         return JSON.parse(jsonStr) as QuizResponse;
     } catch (error: any) {
-        console.error('Error generating questions from multimodal:', error);
-        throw new Error(`Failed to generate questions: ${error?.message}`);
+        throw new Error(`Failed to generate questions: ${formatAiError(error)}`);
     }
 };
 
@@ -421,7 +443,6 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
     return JSON.parse(jsonStr) as CurrentAffairsResponse;
     
   } catch (error: any) {
-    console.error('Error fetching current affairs:', error);
-    throw new Error(`Failed to fetch current affairs: ${error?.message}`);
+    throw new Error(`Failed to fetch current affairs: ${formatAiError(error)}`);
   }
 };

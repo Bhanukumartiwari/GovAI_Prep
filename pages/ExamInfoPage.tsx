@@ -53,8 +53,8 @@ export const ExamInfoPage: React.FC<ExamInfoPageProps> = ({ onNavigate }) => {
     try {
       const result = await getExamInfo(targetExam);
       setInfo(result);
-    } catch (err) {
-      setError('Intelligence retrieval failed. System retry recommended.');
+    } catch (err: any) {
+      setError(err?.message || 'Intelligence retrieval failed. System retry recommended.');
       console.error(err);
     } finally {
       setIsLoading(false);

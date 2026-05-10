@@ -49,8 +49,8 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate }
     try {
         const result = await generateStudyPlan(formData);
         setPlan(result);
-    } catch (err) {
-        setError('Failed to generate the study plan. Please try again later.');
+    } catch (err: any) {
+        setError(err?.message || 'Failed to generate the study plan. Please try again later.');
         console.error(err);
     } finally {
         setIsLoading(false);
