@@ -216,7 +216,7 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
                     className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
                 >
                     <BackIcon />
-                    <span>Return to Arsenal</span>
+                    <span>Back to Tools</span>
                 </button>
             </div>
 
@@ -224,10 +224,10 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
                 <div className="lg:col-span-2">
                     <div className="sticky top-28">
                         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
-                            Smart <span className="text-blue-600 italic">Vision.</span>
+                            Note <span className="text-blue-600 italic">Analyzer.</span>
                         </h1>
                         <p className="text-gray-500 text-lg font-medium leading-relaxed mb-10">
-                            Upload your PDFs, class notes, or handwritten snaps. Our AI extracts core concepts and builds practice material instantly.
+                            Upload your PDFs, class notes, or pictures of handwritten pages. Our AI extracts key concepts and builds practice material for you.
                         </p>
 
                         <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm relative overflow-hidden group">

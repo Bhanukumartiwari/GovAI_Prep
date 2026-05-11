@@ -40,39 +40,39 @@ export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({ onNavigate }) => {
                 <nav className="flex items-center text-sm font-bold text-gray-400 uppercase tracking-widest overflow-x-auto whitespace-nowrap">
                     <button onClick={() => onNavigate('dashboard')} className="hover:text-blue-600 transition-colors">Dashboard</button>
                     <span className="mx-3 opacity-30">/</span>
-                    <span className="text-gray-900">Operational Analytics</span>
+                    <span className="text-gray-900">Performance Analytics</span>
                 </nav>
                 <button 
                     onClick={() => onNavigate('dashboard')}
                     className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
                 >
                     <BackIcon />
-                    <span>Return to Command</span>
+                    <span>Back to Dashboard</span>
                 </button>
             </div>
 
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10">
                 <div className="max-w-2xl">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight font-display mb-4">
-                        Mission <span className="text-blue-600">Metrics.</span>
+                        Success <span className="text-blue-600">Metrics.</span>
                     </h1>
                     <p className="text-base text-gray-500 font-medium leading-relaxed">
-                        Comprehensive intelligence on your academic performance.
+                        Track your academic performance and improve your preparation strategy.
                     </p>
                 </div>
             </header>
 
             {/* Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <StatCard icon={<TargetIcon />} title="Mean Accuracy" value={`${mockStats.averageScore}%`} trend="+2.4%" />
-                <StatCard icon={<CheckCircleIcon />} title="Peak Performance" value={`${mockStats.accuracy}%`} trend="+1.1%" />
-                <StatCard icon={<GoalsIcon />} title="Simulation Count" value={mockStats.testsTaken.toString()} trend="Active" />
+                <StatCard icon={<TargetIcon />} title="Average Accuracy" value={`${mockStats.averageScore}%`} trend="+2.4%" />
+                <StatCard icon={<CheckCircleIcon />} title="Best Accuracy" value={`${mockStats.accuracy}%`} trend="+1.1%" />
+                <StatCard icon={<GoalsIcon />} title="Total Quizzes" value={mockStats.testsTaken.toString()} trend="Active" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Subject Performance */}
                 <div className="lg:col-span-4 bg-white p-7 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300">
-                    <h2 className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-8 block">Vertical Mastery</h2>
+                    <h2 className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-8 block">Subject Performance</h2>
                     <div className="space-y-6">
                         {mockSubjectPerformance.map(sub => (
                             <div key={sub.subject} className="group">
@@ -93,14 +93,14 @@ export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({ onNavigate }) => {
 
                 {/* Test History */}
                 <div className="lg:col-span-8 bg-white p-7 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden">
-                     <h2 className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-8 block">Deployment History</h2>
+                     <h2 className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-8 block">Quiz History</h2>
                      <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b border-gray-50">
-                                    <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3">Operation</th>
+                                    <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3">Test Name</th>
                                     <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 text-center">Score</th>
-                                    <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 text-center">Efficiency</th>
+                                    <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 text-center">Accuracy</th>
                                     <th className="pb-5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 text-right">Date</th>
                                 </tr>
                             </thead>

@@ -9,12 +9,12 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
     const navLinks: { page: Page; label: string }[] = [
-        { page: 'home', label: 'Index' },
-        { page: 'dashboard', label: 'Command' },
-        { page: 'tools', label: 'Arsenal' },
-        { page: 'current-affairs', label: 'Briefing' },
-        { page: 'blog', label: 'Editorial' },
-        { page: 'community', label: 'Network' },
+        { page: 'home', label: 'Home' },
+        { page: 'dashboard', label: 'Dashboard' },
+        { page: 'tools', label: 'Study Tools' },
+        { page: 'current-affairs', label: 'Current Affairs' },
+        { page: 'blog', label: 'Blog' },
+        { page: 'community', label: 'Community' },
     ];
 
     return (

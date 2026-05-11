@@ -123,7 +123,7 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, 
                 className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
             >
                 <BackIcon />
-                <span>Return to Arsenal</span>
+                <span>Back to Tools</span>
             </button>
       </div>
 
@@ -134,11 +134,11 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, 
                     <PlannerIcon />
                 </div>
                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight font-display mb-6">
-                    Design Your <br />
-                    <span className="text-blue-600 italic">Success Roadmap.</span>
+                    Our Weekly <br />
+                    <span className="text-blue-600 italic">Study Plan.</span>
                 </h1>
                 <p className="text-gray-500 text-lg font-medium leading-relaxed mb-10">
-                    Our AI analyzes your subjects, duration, and pace to create a week-by-week strategy that maximizes retention.
+                    Get a personalized week-by-week strategy tailored to your subjects and daily commitment for maximum memory retention.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm relative overflow-hidden">

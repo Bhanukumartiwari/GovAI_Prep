@@ -11,6 +11,21 @@ export const BLOG_POSTS: BlogPost[] = [
     date: 'May 10, 2024',
     readTime: '12 min read',
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=800',
+    keywords: ['constitution', 'rights', 'democracy', 'polity', 'law'],
+    comments: [
+      {
+        id: 'c1',
+        author: 'Siddharth V.',
+        date: 'May 10, 2024',
+        content: 'This breakdown of Article 21 is excellent. Very helpful for my UPSC mains preparation!'
+      },
+      {
+        id: 'c2',
+        author: 'Meera Kapoor',
+        date: 'May 11, 2024',
+        content: 'Could you also write about the Writ Jurisdictions of the Supreme Court? That would be a great follow-up.'
+      }
+    ],
     content: `
 # The Pillars of Democracy: Understanding Fundamental Rights in India
 
@@ -76,6 +91,7 @@ Regardless of the exam, a thorough grasp of Part III is your first step toward b
     date: 'May 08, 2024',
     readTime: '15 min read',
     image: 'https://images.unsplash.com/photo-1545642192-38379a1f4963?auto=format&fit=crop&q=80&w=800',
+    keywords: ['history', 'revolt', 'independence', '1857', 'british'],
     content: `
 # The First War of Independence: Analyzing the Revolt of 1857
 
@@ -130,6 +146,7 @@ For UPSC, focus on the "nature" of the revolt and its impact on the later freedo
     date: 'May 05, 2024',
     readTime: '15 min read',
     image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+    keywords: ['geography', 'monsoon', 'climate', 'weather', 'environment'],
     content: `
 # Decoding the Indian Monsoon: From Mechanism to Climate Impacts
 
@@ -183,6 +200,7 @@ The monsoon is not just weather; it is the heartbeat of the subcontinent. As we 
     date: 'May 01, 2024',
     readTime: '12 min read',
     image: 'https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&q=80&w=800',
+    keywords: ['environment', 'energy', 'hydrogen', 'science', 'technology'],
     content: `
 # Green Hydrogen: India's Leap Towards a Net-Zero Future
 
@@ -236,6 +254,7 @@ In the long run, Green Hydrogen represents India's transition from being an "Ene
     date: 'April 28, 2024',
     readTime: '15 min read',
     image: 'https://images.unsplash.com/photo-1611974714158-f8605df001cb?auto=format&fit=crop&q=80&w=800',
+    keywords: ['economics', 'banking', 'finance', 'policy', 'digital'],
     content: `
 # The Evolution of Indian Banking: From Nationalization to Neo-Banks
 
@@ -287,60 +306,88 @@ Banking in India is no longer just about depositing and withdrawing money; it is
     author: 'General Studies Desk',
     date: 'April 25, 2024',
     readTime: '12 min read',
-    image: 'https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1545642192-38379a1f4963?auto=format&fit=crop&q=80&w=800',
+    keywords: ['gk', 'culture', 'dance', 'art', 'tradition'],
+    comments: [
+      {
+        id: 'c3',
+        author: 'Ravi Kumar',
+        date: 'April 26, 2024',
+        content: 'The table comparing classical and folk dances was exactly what I needed for my notes!'
+      }
+    ],
     content: `
 # Rhythms of Culture: A Comprehensive Guide to Classical Dances of India
 
-India's cultural heritage is a tapestry woven with threads of ancient traditions, and nothing exemplifies this better than our classical dance forms. Rooted in the **Natya Shastra**—the foundational treatise on performing arts attributed to the sage Bharat Muni (composed between 200 BCE and 200 CE)—these dances are not just entertainment; they are a form of "Yajña" or spiritual offering.
+India's cultural heritage is a tapestry woven with threads of ancient traditions. Rooted in the **Natya Shastra**—the foundational treatise on performing arts attributed to the sage Bharat Muni—these dances are essential for GS Paper 1 and various Static GK sections.
 
-## The Pillars of Classical Dance: Nritta, Nritya, and Natya
-Every classical dance form is structured around three primary elements:
-1. **Nritta (Pure Dance):** Focuses on rhythmic movements, footwork, and postures. It has no poetic meaning and is performed for its sheer aesthetic beauty.
-2. **Nritya (Expressive Dance):** This is the "soul" of the performance. It uses "Abhinaya" (expression) through facial gestures, hand movements (Mudras), and body language to convey a story or a theme.
-3. **Natya (Dramatic Element):** Involves the element of storytelling or drama, often with multiple characters, emphasizing the narrative aspect.
+## Quick Reference: 8 Classical Dances of India
 
-## The Eight Recognized Classical Dances
-While there are many regional traditions, the **Sangeet Natak Akademi** recognizes eight dance forms as "Classical." Each has a distinct flavor, history, and geographical origin.
+| Dance Form | State of Origin | Main Feature | Famous Exponent |
+| :--- | :--- | :--- | :--- |
+| **Bharatnatyam** | Tamil Nadu | Oldest form, Sadir origin | Rukmini Devi Arundale |
+| **Kathak** | North India | Footwork & Chakkars | Birju Maharaj |
+| **Kathakali** | Kerala | Mask & Facial Expression | Kalamandalam Gopi |
+| **Kuchipudi** | Andhra Pradesh | Tarangam (Plate Dance) | Raja & Radha Reddy |
+| **Odissi** | Odisha | Tribhanga Posture | Kelucharan Mohapatra |
+| **Sattriya** | Assam | Bhakti Movement origin | Sankaradeva (Founder) |
+| **Manipuri** | Manipur | Raaslila themes | Jhaveri Sisters |
+| **Mohiniyattam** | Kerala | Graceful feminine movements | Sunanda Nair |
 
-### 1. Bharatnatyam (Tamil Nadu)
-The oldest of all classical dances, it was originally called *Sadir* and was performed by *Devadasis* in temples. It is known for its "fire dance" elements—sharp, linear movements and perfect geometry. The typical repertoire includes *Alarippu*, *Jatiswaram*, and *Varnams*.
-- **Key Exponents:** Rukmini Devi Arundale, Padma Subrahmanyam.
-
-### 2. Kathak (North India)
-The name comes from 'Kathakars' or storytellers who used to recite religious stories in temples. During the Mughal era, it moved to the royal courts and acquired a secular, sophisticated character. It is famous for its thunderous footwork (*Tatkar*) and lightning-fast pirouettes (*Chakkars*).
-- **Key Exponents:** Birju Maharaj, Sitara Devi.
-
-### 3. Kathakali (Kerala)
-More than a dance, it is a grand "Dance-Drama." Known for its massive, colorful headgears and elaborate facial makeup. Dancers use intense eye movements and facial muscles to depict characters from the Puranas. It traditionally features high-energy battle scenes (*Viras*).
-- **Key Exponents:** Kalamandalam Gopi, Rita Ganguly.
-
-### 4. Kuchipudi (Andhra Pradesh)
-Originating in the village of Kuchipudi, it is closely related to Bharatnatyam but features more fluid and rounded movements. A unique feature is the *Tarangam*, where the dancer performs while standing on the rim of a brass plate, often balancing a pot of water on their head.
-- **Key Exponents:** Raja and Radha Reddy, Vempati Chinna Satyam.
-
-### 5. Odissi (Odisha)
-Originating from the temples of Odisha (like Konark and Puri Jagannath), it is characterized by the *Tribhanga* posture—where the body is bent at the neck, waist, and knee. It is one of the most lyrical and graceful forms, often described as "poetry in motion."
-- **Key Exponents:** Kelucharan Mohapatra, Sonal Mansingh.
-
-### 6. Sattriya (Assam)
-Introduced in the 15th century by the great Bhakti saint **Mahapurush Sankaradeva**, it was originally part of the *Ankia Naat* (one-act plays) in the *Sattras* (monasteries). It emphasizes devotional themes related to Lord Krishna.
-- **Key Exponents:** Bhabananda Barbayan.
-
-### 7. Manipuri (Manipur)
-Unlike other forms that emphasize footwork, Manipuri is characterized by extremely gentle, swaying movements of the upper body. It is primarily based on the *Raslila* (the cosmic dance of Krishna and Radha). Dancers wear a stiff, cylindrical skirt called a *Kumil*.
-- **Key Exponents:** Jhaveri Sisters (Nayna, Ranjana, Suverna, Darshana).
-
-### 8. Mohiniyattam (Kerala)
-The "Dance of the Enchantress." According to legend, Lord Vishnu took the form of Mohini to vanquish demons. It features swaying, oceanic movements that represent the lush landscape of Kerala. It is characterized by feminine grace (*Lasya*) and simple white-and-gold costumes.
-- **Key Exponents:** Sunanda Nair, Kanak Rele.
-
-## Significance in Competitive Exams
-For GS (Art and Culture), questions often focus on the state of origin, key features (like *Tribhanga* or *Tarangam*), and the associated musical instruments. Understanding the difference between *Lasya* (graceful, feminine) and *Tandava* (vigorous, masculine) elements is also important.
-
-India's classical dances are living museums of our history. By mastering these details, you don't just prepare for an exam; you connect with the soul of the nation.
+## The Three Pillars: Nritta, Nritya, and Natya
+1. **Nritta (Pure Dance):** Focuses on rhythmic footwork and postures without poetic meaning.
+2. **Nritya (Expressive Dance):** Uses facial gestures (Abhinaya) and hand movements (Mudras) to convey a story.
+3. **Natya (Dramatic Element):** Involves the element of storytelling or drama.
 
 ---
-*Enhance your Static GK preparation with GovAI Prep's AI-curated modules!*
+*Static GK Hint: Remember that Sattriya was added to the list as recently as 2000!*
+    `
+  },
+  {
+    id: '8',
+    slug: 'indian-states-capitals-gk-2024',
+    title: 'States and Capitals of India: A Complete 2024 List for Quick Revision',
+    category: 'Static GK',
+    excerpt: 'A clean, quick-reference table for all Indian States, Capitals, and Union Territories—essential for SSC and Railway exams.',
+    author: 'GK Specialist',
+    date: 'May 11, 2024',
+    readTime: '5 min read',
+    image: 'https://images.unsplash.com/photo-1524492459413-0296b7aa9960?auto=format&fit=crop&q=80&w=800',
+    keywords: ['gk', 'states', 'capitals', 'india', 'revision'],
+    content: `
+# States and Capitals of India: 2024 Complete List
+
+For candidates appearing in SSC CGL, BSSC, or RRB exams, knowing the states and their capitals (especially the North-Eastern ones) is mandatory.
+
+## Indian States and Their Capitals
+
+| No. | State | Capital | Established |
+| :--- | :--- | :--- | :--- |
+| 1 | **Andhra Pradesh** | Amaravati | 1 Nov 1956 |
+| 2 | **Arunachal Pradesh**| Itanagar | 20 Feb 1987 |
+| 3 | **Assam** | Dispur | 26 Jan 1950 |
+| 4 | **Bihar** | Patna | 26 Jan 1950 |
+| 5 | **Chhattisgarh** | Raipur | 1 Nov 2000 |
+| 6 | **Goa** | Panaji | 30 May 1987 |
+| 7 | **Gujarat** | Gandhinagar | 1 May 1960 |
+| 8 | **Haryana** | Chandigarh | 1 Nov 1966 |
+| 27 | **Uttar Pradesh** | Lucknow | 24 Jan 1950 |
+| 28 | **West Bengal** | Kolkata | 26 Jan 1950 |
+
+## Union Territories and Their Capitals
+
+| No. | Union Territory | Capital |
+| :--- | :--- | :--- |
+| 1 | **Andaman & Nicobar** | Port Blair |
+| 2 | **Chandigarh** | Chandigarh |
+| 3 | **Dadra and Nagar Haveli & Daman & Diu** | Daman |
+| 4 | **Delhi (NCT)** | New Delhi |
+| 5 | **Jammu & Kashmir** | Srinagar (Summer) / Jammu (Winter) |
+| 6 | **Ladakh** | Leh |
+| 7 | **Lakshadweep** | Kavaratti |
+| 8 | **Puducherry** | Puducherry |
+
+💡 **Pro-Tip:** Focus on the 'Seven Sisters' of North-East India as their capitals are frequently confused in exams.
     `
   },
   {
@@ -353,6 +400,7 @@ India's classical dances are living museums of our history. By mastering these d
     date: 'May 10, 2026',
     readTime: '18 min read',
     image: 'https://images.unsplash.com/photo-1598897349489-0d59fa869f2b?auto=format&fit=crop&q=80&w=800',
+    keywords: ['current affairs', 'awards', 'films', 'cinema', '2026'],
     content: `
 # 71st National Film Awards: Complete Winner List & GS Facts for UPSC, SSC & BSSC CGL 2026
 

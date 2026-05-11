@@ -48,14 +48,14 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    // Use gemini-flash-latest for stability and broad availability
-    const model = 'gemini-flash-latest';
+    // Use gemini-3-flash-preview for best performance and latest features
+    const model = 'gemini-3-flash-preview';
     
     const response = await ai.models.generateContent({
         model: model,
         contents: question,
         config: {
-            systemInstruction: "You are an expert AI assistant for Indian government exam preparation (like UPSC, SSC, etc.). Your answers must be comprehensive and accurate. Structure your responses for easy student comprehension. **Crucially, highlight all important keywords, names, dates, and concepts by enclosing them in double asterisks (e.g., **keyword**).** Use Markdown for headings and bullet points. Always include a section for 'Key Facts' and 'Additional Context' related to the question to help with broader exam preparation."
+            systemInstruction: "You are an expert AI mentor for Indian government exam preparation (UPSC, SSC, Banking, State PSC). Your goal is to provide clear, accurate, and highly structured information that helps students learn faster. \n\n**Formatting Rules:**\n1. Use clear, descriptive Markdown headers (##, ###).\n2. **Always bold** important keywords, names, dates, acts, and concepts.\n3. Use bullet points for lists to ensure scanability.\n4. Include a '💡 Pro-Tip for Aspirants' section at the end of each response.\n5. If the topic is complex, start with a 1-sentence 'TL;DR' summary.\n6. Maintain an encouraging, professional, and authoritative tone."
         }
     });
     
@@ -84,8 +84,15 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-flash-latest';
-        const prompt = `Generate a multiple-choice quiz with ${count} questions on the topic: "${topic}". The questions should be relevant for the **${exam}** exam with a **${difficulty}** difficulty level. For each question, provide 4 options (A, B, C, D), indicate the correct answer key (e.g., "A"), provide a brief clear explanation, and list 2-3 additional 'related facts' or 'important pointers' that are relevant to this specific topic/question for competitive exams.`;
+        const model = 'gemini-3-flash-preview';
+        const prompt = `Generate a high-quality multiple-choice quiz with ${count} questions on the topic: "${topic}". 
+        The questions must be highly relevant for the **${exam}** exam at a **${difficulty}** difficulty level. 
+        
+        For each question:
+        1. Provide 4 distinct options (A, B, C, D).
+        2. Indicate the correct answer key.
+        3. Provide a clear, educational explanation that not only gives the answer but explains 'why'.
+        4. List 2-3 'Extra Edge' facts related to the question that are frequently asked in competitive exams.`;
 
         const response = await ai.models.generateContent({
             model: model,
@@ -148,14 +155,26 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-flash-latest';
-    const prompt = `Create an extremely detailed, actionable, and comprehensive study plan for a student preparing for the **${exam}** exam with these subjects: ${subjects}. Duration: ${duration}. Daily hours: ${dailyHours}. Use Markdown.`;
+    const model = 'gemini-3-flash-preview';
+    const prompt = `Create a highly structured, week-by-week study plan for a student preparing for the **${exam}** exam.
+    
+    **Student Profile:**
+    - **Subjects to Cover:** ${subjects}
+    - **Preparation Horizon:** ${duration}
+    - **Daily Commitment:** ${dailyHours} hours
+    
+    **Requirements:**
+    1. Organize the plan into Weeks (Week 1, Week 2, etc.).
+    2. For each week, specify the core topics, recommended resources, and a 'Weekly Goal'.
+    3. Include 1 day per week for revision and 1 day for a mock test.
+    4. Provide specific advice on how to integrate Current Affairs with these subjects.
+    5. Use clear Markdown formatting with bold text for emphasis.`;
 
     const response = await ai.models.generateContent({
       model: model,
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert academic counselor for Indian exams."
+        systemInstruction: "You are an expert academic counselor for Indian competitive exams. Your plans are realistic, motivating, and designed for maximum memory retention."
       }
     });
 
@@ -171,7 +190,7 @@ export const getExamInfo = async (exam: string): Promise<string> => {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-flash-latest';
+    const model = 'gemini-3-flash-preview';
     const prompt = `
       Provide a highly detailed, student-friendly, and structured overview for the **${exam}** examination. 
       
@@ -215,14 +234,24 @@ export const analyzeDocument = async (text: string): Promise<string> => {
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-flash-latest';
-        const prompt = `Analyze and summarize this study material text. Extract key concepts, dates, names, and formulas. Use Markdown. TEXT: ${text}`;
+        const model = 'gemini-3-flash-preview';
+        const prompt = `
+          Analyze the following study material and provide a student-friendly summary.
+          
+          **Analysis Requirements:**
+          1. **Key Concepts:** Identify 5-7 core concepts explained simply.
+          2. **Crucial Data:** List important dates, names, figures, and formulas.
+          3. **Exam Context:** Explain why this specific topic is important for exams like UPSC/SSC.
+          4. **Summary Table:** Create a small Markdown table for comparing key points if applicable.
+          
+          TEXT: ${text}
+        `;
 
         const response = await ai.models.generateContent({
             model: model,
             contents: prompt,
             config: {
-                systemInstruction: "You are an expert study material analyzer."
+                systemInstruction: "You are an expert study material analyzer who turns complex academic text into easy-to-read study notes."
             }
         });
 
@@ -238,7 +267,7 @@ export const generateQuestionsFromText = async (text: string, count: number = 5)
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-flash-latest';
+        const model = 'gemini-3-flash-preview';
         const prompt = `Based on this text, generate ${count} high-quality MCQs for competitive exams. Output in JSON. TEXT: ${text}`;
 
         const response = await ai.models.generateContent({
@@ -294,7 +323,7 @@ export const analyzeDocumentMultimodal = async (imageParts: { inlineData: { data
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-flash-latest';
+        const model = 'gemini-3-flash-preview';
         
         const textPart = {
             text: `
@@ -328,7 +357,7 @@ export const generateQuestionsFromMultimodal = async (imageParts: { inlineData: 
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-flash-latest';
+        const model = 'gemini-3-flash-preview';
         const prompt = `Based on the attached images of study notes (potentially in English or Hindi), generate ${count} high-quality MCQs suitable for UPSC/SSC. Provide output in JSON format in English.`;
 
         const response = await ai.models.generateContent({
@@ -399,7 +428,7 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-flash-latest';
+    const model = 'gemini-3-flash-preview';
     let prompt = `Provide a list of 5 recent and important current affairs articles on the topic: "${topic}".`;
 
     if (date) {

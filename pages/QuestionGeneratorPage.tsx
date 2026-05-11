@@ -124,7 +124,7 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                 className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
             >
                 <BackIcon />
-                <span>Return to Command</span>
+                <span>Back to Dashboard</span>
             </button>
         </div>
 
@@ -149,19 +149,19 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
             
             <form onSubmit={handleSubmit} className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
                 <div className="md:col-span-8">
-                    <label htmlFor="topic" className={formLabelClass}>Vertical Focus</label>
+                    <label htmlFor="topic" className={formLabelClass}>Subject / Topic</label>
                     <input
                         type="text"
                         id="topic"
                         value={topic}
                         onChange={(e) => setTopic(e.target.value)}
                         className={formInputClass}
-                        placeholder="e.g., Fundamental Rights in Constitution"
+                        placeholder="e.g., Fundamental Rights, Ancient History"
                         required
                     />
                 </div>
                 <div className="md:col-span-4">
-                    <label htmlFor="exam" className={formLabelClass}>Exam Profile</label>
+                    <label htmlFor="exam" className={formLabelClass}>Target Exam</label>
                     <select
                         id="exam"
                         value={exam}
@@ -176,7 +176,7 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                     </select>
                 </div>
                 <div className="md:col-span-4">
-                    <label htmlFor="difficulty" className={formLabelClass}>Complexity</label>
+                    <label htmlFor="difficulty" className={formLabelClass}>Difficulty Level</label>
                     <div className="grid grid-cols-3 gap-2">
                         {(['Easy', 'Medium', 'Hard']).map((d) => (
                             <button
@@ -191,7 +191,7 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                     </div>
                 </div>
                 <div className="md:col-span-4">
-                    <label htmlFor="count" className={formLabelClass}>Batch Size</label>
+                    <label htmlFor="count" className={formLabelClass}>Number of Questions</label>
                     <select
                         id="count"
                         value={count}
@@ -210,7 +210,7 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                         disabled={isLoading || isRegenerating}
                         className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl shadow-xl hover:bg-black transition-all active:scale-95 text-xs uppercase tracking-[0.2em] disabled:opacity-50"
                     >
-                        {isLoading ? 'Synthesizing...' : 'Run Synthesis'}
+                        {isLoading ? 'Generating...' : 'Generate Quiz'}
                     </button>
                 </div>
             </form>

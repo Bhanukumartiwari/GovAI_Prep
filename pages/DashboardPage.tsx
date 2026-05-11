@@ -41,14 +41,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate, activi
                 <nav className="flex items-center text-sm font-bold text-gray-400 uppercase tracking-widest overflow-x-auto whitespace-nowrap">
                     <button onClick={() => onNavigate('home')} className="hover:text-blue-600 transition-colors">Home</button>
                     <span className="mx-3 opacity-30">/</span>
-                    <span className="text-gray-900">Intelligence Dashboard</span>
+                    <span className="text-gray-900">Your Dashboard</span>
                 </nav>
                 <button 
                     onClick={() => onNavigate('home')}
                     className="group flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 hover:border-blue-100"
                 >
                     <BackIcon />
-                    <span>Return to Home</span>
+                    <span>Back to Home</span>
                 </button>
             </div>
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -150,11 +150,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate, activi
                 <div className="relative z-10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900 font-display tracking-tight">Intelligence <span className="text-blue-600">Solver.</span></h2>
-                            <p className="text-gray-400 font-medium mt-1 text-sm">Instant logic resolution for examination concepts.</p>
+                            <h2 className="text-2xl font-bold text-gray-900 font-display tracking-tight">AI Study <span className="text-blue-600">Mentor.</span></h2>
+                            <p className="text-gray-400 font-medium mt-1 text-sm">Ask any question related to your exam and get instant help.</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nodes Active</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mentor Online</span>
                             <div className="flex -space-x-2">
                                 {[1, 2, 3, 4].map(i => (
                                     <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
