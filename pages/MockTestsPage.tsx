@@ -12,6 +12,7 @@ import { DownloadIcon } from '../components/icons/DownloadIcon';
 const exams = [
   { id: 'upsc', name: 'UPSC', description: 'Union Public Service Commission exams like Civil Services, CDS, etc.' },
   { id: 'ssc', name: 'SSC', description: 'Staff Selection Commission exams like CGL, CHSL, etc.' },
+  { id: 'general', name: 'Full Mock', description: 'Comprehensive simulation for GS, Mathematics, and Reasoning subjects.' },
   { id: 'bpsc', name: 'BPSC', description: 'Bihar Public Service Commission state-level exams.' },
   { id: 'banking', name: 'Banking', description: 'Exams for banking sector like IBPS PO, Clerk, SBI PO, etc.' },
   { id: 'railways', name: 'Railways', description: 'Railway Recruitment Board (RRB) exams like NTPC, Group D.' },
@@ -20,12 +21,14 @@ const exams = [
 const subjectsByExam: Record<string, string[]> = {
   upsc: ['Indian Polity', 'Modern History', 'Geography', 'Economy'],
   ssc: ['General Awareness', 'Quantitative Aptitude', 'Reasoning', 'English'],
+  general: ['General Studies (GS)', 'Mathematics', 'Reasoning'],
   bpsc: ['History of India & Bihar', 'General Science', 'Current Affairs', 'Indian Polity'],
   banking: ['Banking Awareness', 'Quantitative Aptitude', 'Reasoning Ability', 'English Language'],
   railways: ['General Awareness', 'Mathematics', 'General Intelligence & Reasoning'],
 };
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
+type QuestionCount = 10 | 25 | 50;
 type TestState = 'selection' | 'subject_selection' | 'running' | 'finished';
 
 interface ActiveTest {
@@ -44,6 +47,7 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onActi
     const [testState, setTestState] = useState<TestState>('selection');
     const [selectedExam, setSelectedExam] = useState<(typeof exams[0]) | null>(null);
     const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
+    const [questionCount, setQuestionCount] = useState<QuestionCount>(25);
     const [activeTest, setActiveTest] = useState<ActiveTest | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -95,14 +99,14 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onActi
     }, [testState, timeLeft, handleSubmit]);
 
 
-    const handleStartTest = async (subject: string, testDifficulty: Difficulty) => {
+    const handleStartTest = async (subject: string, testDifficulty: Difficulty, count: QuestionCount = 10) => {
         if (!selectedExam) return;
         
         setIsLoading(true);
         setError('');
         const testConfig = {
-            questions: 10,
-            duration: 10 * 60, // 10 minutes
+            questions: count,
+            duration: count * 60, // 1 minute per question
         };
 
         try {
@@ -311,18 +315,34 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onActi
                             <div className="text-sm font-bold">{error}</div>
                         </div>
                     )}
-                    <div className="mb-10">
-                        <label className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Simulation Intensity</label>
-                        <div className="grid grid-cols-3 gap-3">
-                            {(['Easy', 'Medium', 'Hard'] as Difficulty[]).map(d => (
-                                <button
-                                    key={d}
-                                    onClick={() => setDifficulty(d)}
-                                    className={`py-4 rounded-2xl font-bold transition-all ${difficulty === d ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
-                                >
-                                    {d}
-                                </button>
-                            ))}
+                    <div className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Simulation Intensity</label>
+                            <div className="grid grid-cols-3 gap-3">
+                                {(['Easy', 'Medium', 'Hard'] as Difficulty[]).map(d => (
+                                    <button
+                                        key={d}
+                                        onClick={() => setDifficulty(d)}
+                                        className={`py-4 rounded-2xl font-bold transition-all ${difficulty === d ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                                    >
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Question Volume</label>
+                            <div className="grid grid-cols-3 gap-3">
+                                {([10, 25, 50] as QuestionCount[]).map(c => (
+                                    <button
+                                        key={c}
+                                        onClick={() => setQuestionCount(c)}
+                                        className={`py-4 rounded-2xl font-bold transition-all ${questionCount === c ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                                    >
+                                        {c} Qs
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -331,14 +351,14 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onActi
                         {subjectsByExam[selectedExam.id].map(subject => (
                             <button 
                                 key={subject} 
-                                onClick={() => handleStartTest(subject, difficulty)} 
+                                onClick={() => handleStartTest(subject, difficulty, questionCount)} 
                                 className="w-full group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all"
                             >
                                 <div className="text-left">
                                     <h3 className="text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{subject}</h3>
                                     <div className="flex gap-4 mt-1">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">10 OBJECTIVES</span>
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">10 MINUTES</span>
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{questionCount} OBJECTIVES</span>
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{questionCount} MINUTES</span>
                                     </div>
                                 </div>
                                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">

@@ -201,7 +201,8 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                     >
                         <option value={5}>05 Questions</option>
                         <option value={10}>10 Questions</option>
-                        <option value={15}>15 Questions</option>
+                        <option value={25}>25 Questions</option>
+                        <option value={50}>50 Questions</option>
                     </select>
                 </div>
                 <div className="md:col-span-4">
