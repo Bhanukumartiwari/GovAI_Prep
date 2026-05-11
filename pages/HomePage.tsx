@@ -45,6 +45,12 @@ const features = [
         page: 'analytics' as Page
     },
     {
+        icon: <BookOpen className="w-5 h-5" />,
+        title: "Knowledge Editorial",
+        description: "Read in-depth articles on Static GK and GS topics formatted for quick revision.",
+        page: 'blog' as Page
+    },
+    {
         icon: <InfoIcon />,
         title: "Exam Information",
         description: "Get comprehensive details on latest exam dates, patterns, and detailed syllabi.",
@@ -89,7 +95,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                                 onClick={() => onNavigate('exam-info')} 
                                 className="px-6 py-3 bg-white text-gray-900 font-bold rounded-xl border border-gray-200 hover:border-blue-200 hover:bg-blue-50/30 transition-all shadow-sm text-xs uppercase tracking-widest"
                             >
-                                Explorer Exam Details
+                                Explore Exam Details
                             </button>
                         </div>
 

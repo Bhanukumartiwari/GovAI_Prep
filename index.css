@@ -5,20 +5,144 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Force hex/rgb colors to avoid oklch issues with html2canvas/jsPDF */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-blue-950: #172554;
+  
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-200: #fed7aa;
+  --color-orange-300: #fdba74;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f97316;
+  --color-orange-600: #ea580c;
+  --color-orange-700: #c2410c;
+  --color-orange-800: #9a3412;
+  --color-orange-900: #7c2d12;
+  --color-orange-950: #431407;
+
+  /* Red/Green for some UI elements */
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+}
+
+/* PDF Export Specific Styles */
+.pdf-export-container {
+  padding: 60px 80px !important;
+  background-color: #ffffff !important;
+  width: 1000px !important; /* Slightly wider for better text flow */
+  margin: 0 auto !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.pdf-export-container * {
+  color-scheme: light !important;
+}
+
+.pdf-only {
+  display: none !important;
+}
+
+.pdf-export-active .pdf-only {
+  display: block !important;
+}
+
+.pdf-export-active .no-pdf {
+  display: none !important;
 }
 
 /* Simple styling for Markdown content */
-.markdown-body h1 { @apply text-3xl font-bold mt-8 mb-4 text-gray-900 font-display; }
-.markdown-body h2 { @apply text-2xl font-bold mt-6 mb-3 text-gray-800 border-b border-gray-100 pb-2 font-display; }
-.markdown-body h3 { @apply text-xl font-semibold mt-5 mb-2 text-gray-700 font-display; }
-.markdown-body p { @apply mb-4 leading-relaxed text-gray-600; }
-.markdown-body ul { @apply list-disc ml-6 mb-4 space-y-1; }
-.markdown-body ol { @apply list-decimal ml-6 mb-4 space-y-1; }
-.markdown-body li { @apply text-gray-600; }
-.markdown-body strong { @apply font-semibold text-gray-900; }
-.markdown-body hr { @apply my-8 border-t-2 border-gray-100; }
-.markdown-body blockquote { @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4 bg-blue-50/50 py-2 rounded-r-lg; }
-.markdown-body code { @apply bg-gray-100 px-1.5 py-0.5 rounded font-mono text-sm text-blue-700; }
-.markdown-body table { @apply w-full border-collapse mb-6 overscroll-x-auto block; }
-.markdown-body th, .markdown-body td { @apply border border-gray-200 p-3 text-left min-w-[120px]; }
-.markdown-body th { @apply bg-gray-50 font-semibold text-gray-700; }
+.markdown-body > * {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.markdown-body p, .markdown-body li {
+  orphans: 3;
+  widows: 3;
+}
+
+.markdown-body h1 { 
+  @apply text-3xl font-bold mt-10 mb-6 font-display;
+  color: #111827; /* gray-900 */
+}
+.markdown-body h2 { 
+  @apply text-xl font-bold mt-12 mb-6 border-b-2 pb-2 font-display uppercase tracking-wider;
+  color: #1e3a8a; /* blue-900 */
+  border-color: #f3f4f6; /* gray-100 */
+}
+.markdown-body h3 { 
+  @apply text-lg font-bold mt-8 mb-4 font-display;
+  color: #1f2937; /* gray-800 */
+}
+.markdown-body p { 
+  @apply mb-5 leading-relaxed font-medium text-base;
+  color: #374151; /* gray-700 */
+}
+.markdown-body ul { @apply list-disc ml-8 mb-6 space-y-3; }
+.markdown-body ol { @apply list-decimal ml-8 mb-6 space-y-3; }
+.markdown-body li { 
+  @apply font-medium text-base leading-relaxed;
+  color: #374151; /* gray-700 */
+}
+.markdown-body strong { 
+  @apply font-bold;
+  color: #111827; /* gray-900 */
+}
+.markdown-body hr { 
+  @apply my-10 border-t-2;
+  border-color: #f9fafb; /* gray-50 */
+}
+.markdown-body blockquote { 
+  @apply border-l-4 pl-6 italic my-6 py-4 rounded-r-2xl;
+  border-color: #3b82f6; /* blue-500 */
+  color: #374151; /* gray-700 */
+  background-color: #eff6ff; /* blue-50 */
+}
+.markdown-body code { 
+  @apply px-2 py-0.5 rounded font-mono text-xs font-bold;
+  background-color: #f3f4f6; /* gray-100 */
+  color: #1e40af; /* blue-800 */
+}
+.markdown-body table { 
+  @apply block w-full border-collapse mb-8 overflow-x-auto rounded-xl border;
+  border-color: #f3f4f6; /* gray-100 */
+}
+.markdown-body th, .markdown-body td { 
+  @apply border p-4 text-left min-w-[140px] whitespace-nowrap lg:whitespace-normal text-sm;
+  border-color: #f3f4f6; /* gray-100 */
+}
+.markdown-body th { 
+  @apply font-bold uppercase tracking-widest text-[10px];
+  background-color: #f9fafb; /* gray-50 */
+  color: #111827; /* gray-900 */
+}

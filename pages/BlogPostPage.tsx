@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Page } from '../App';
 import { BLOG_POSTS } from '../constants/blogData';
 import { CommentSection } from '../components/CommentSection';
 import { BackIcon } from '../components/icons/BackIcon';
-import { CalendarIcon, UserIcon, ClockIcon, Share2Icon, BookOpen, X, Globe, Briefcase, SendHorizontal } from 'lucide-react';
+import { CalendarIcon, UserIcon, ClockIcon, Share2Icon, BookOpen, X, Globe, Briefcase, SendHorizontal, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface BlogPostPageProps {
   onNavigate: (page: Page) => void;
@@ -16,6 +18,8 @@ interface BlogPostPageProps {
 export const BlogPostPage: React.FC<BlogPostPageProps> = ({ onNavigate, slug }) => {
   const post = BLOG_POSTS.find(p => p.slug === slug);
   const [isReaderMode, setIsReaderMode] = useState(false);
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
+  const articleRef = useRef<HTMLDivElement>(null);
 
   const shareUrl = `https://gov-ai-prep.vercel.app/blog/${post?.slug}`;
   const shareTitle = post?.title || '';
@@ -30,6 +34,75 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ onNavigate, slug }) 
 
   const shareOnLinkedIn = () => {
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank');
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!articleRef.current || !post) return;
+    
+    setIsDownloadingPDF(true);
+    try {
+      const element = articleRef.current;
+      
+      // Create a temporary container for the PDF content to avoid styling issues
+      const pdfWrapper = document.createElement('div');
+      pdfWrapper.style.position = 'fixed';
+      pdfWrapper.style.top = '0';
+      pdfWrapper.style.left = '0';
+      pdfWrapper.style.width = '1000px';
+      pdfWrapper.style.zIndex = '-9999';
+      pdfWrapper.style.opacity = '1';
+      
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.classList.add('pdf-export-active', 'pdf-export-container');
+      
+      // Remove elements that shouldn't be in PDF
+      clone.querySelectorAll('.no-pdf').forEach(el => el.remove());
+      
+      pdfWrapper.appendChild(clone);
+      document.body.appendChild(pdfWrapper);
+      
+      // Wait for layout
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 1000
+      });
+      
+      document.body.removeChild(pdfWrapper);
+      
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210; 
+      const pageHeight = 297; 
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      // Page 1
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= pageHeight;
+      
+      // Subsequent Pages (with small 2mm overlap for readability)
+      const overlap = 2;
+      while (heightLeft > 0) {
+        position = (heightLeft - imgHeight) + overlap;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= (pageHeight - overlap);
+      }
+      
+      pdf.save(`${post.slug}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsDownloadingPDF(false);
+    }
   };
 
   useEffect(() => {
@@ -106,7 +179,7 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ onNavigate, slug }) 
 
       <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 transition-all duration-500 ${isReaderMode ? 'max-w-3xl pt-24' : 'max-w-4xl'}`}>
         {!isReaderMode && (
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-12 no-pdf">
             <button 
               onClick={() => onNavigate('blog' as any)}
               className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors"
@@ -124,6 +197,19 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ onNavigate, slug }) 
               </button>
               
               <div className="flex items-center gap-2 border-l border-gray-100 pl-4 ml-2">
+                <button 
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloadingPDF}
+                  className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-100 transition-all bg-white disabled:opacity-50"
+                  title="Download as PDF"
+                >
+                  {isDownloadingPDF ? (
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : <Download size={16} />}
+                </button>
                 <button 
                   onClick={shareOnTwitter}
                   className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:border-blue-100 transition-all bg-white"
@@ -150,7 +236,8 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ onNavigate, slug }) 
           </div>
         )}
 
-        <article className={isReaderMode ? 'prose-sepia' : ''}>
+        <article className={isReaderMode ? 'prose-sepia' : ''} ref={articleRef}>
+          <p className="hidden pdf-only text-[10px] text-blue-600 font-bold uppercase tracking-widest mb-6">Gov Exam AI Prep • Editorial Insight</p>
           <header className={`mb-16 ${isReaderMode ? 'text-center' : ''}`}>
             {!isReaderMode && (
               <div className="flex items-center gap-4 mb-8">

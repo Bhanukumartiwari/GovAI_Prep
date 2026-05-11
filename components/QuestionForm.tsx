@@ -25,15 +25,15 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({ question, setQuestio
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="INPUT COMMAND OR CONCEPT_..."
-            className="w-full p-8 bg-gray-50 border border-gray-100 rounded-[32px] focus:bg-white focus:ring-8 focus:ring-blue-100/30 focus:border-blue-500 transition-all duration-500 resize-none h-48 text-sm font-bold text-gray-900 placeholder:text-gray-300 uppercase tracking-widest"
+            className="w-full p-10 pr-32 bg-gray-50 border border-gray-100 rounded-[32px] focus:bg-white focus:ring-8 focus:ring-blue-100/30 focus:border-blue-500 transition-all duration-500 resize-none h-56 text-base font-medium text-gray-900 placeholder:text-gray-300 placeholder:uppercase placeholder:tracking-widest"
             disabled={isLoading}
             aria-label="Ask your question"
         />
-        <div className="absolute top-6 right-6">
+        <div className="absolute bottom-8 right-8">
             <button
                 onClick={onSubmit}
                 disabled={isLoading || !question.trim()}
-                className="px-8 py-4 bg-gray-900 text-white rounded-2xl shadow-xl hover:bg-blue-600 disabled:bg-gray-200 disabled:text-gray-400 transition-all duration-300 active:scale-95 text-[10px] font-black uppercase tracking-[0.2em]"
+                className="px-5 py-2.5 bg-gray-900 text-white rounded-xl shadow-xl hover:bg-blue-600 disabled:bg-gray-200 disabled:text-gray-400 transition-all duration-300 active:scale-95 text-[10px] font-black uppercase tracking-widest"
             >
                 {isLoading ? (
                     <span className="flex items-center gap-2">
