@@ -16,9 +16,10 @@ import { ExamInfoPage } from './pages/ExamInfoPage';
 import { DocumentAnalyzerPage } from './pages/DocumentAnalyzerPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogPostPage } from './pages/BlogPostPage';
+import { DailyFeedPage } from './pages/DailyFeedPage';
 import { motion, AnimatePresence } from 'motion/react';
 
-export type Page = 'home' | 'dashboard' | 'tools' | 'current-affairs' | 'community' | 'contact' | 'study-planner' | 'mock-tests' | 'question-generator' | 'analytics' | 'exam-info' | 'document-analyzer' | 'blog' | 'blog-post';
+export type Page = 'home' | 'dashboard' | 'tools' | 'current-affairs' | 'daily-feed' | 'community' | 'contact' | 'study-planner' | 'mock-tests' | 'question-generator' | 'analytics' | 'exam-info' | 'document-analyzer' | 'blog' | 'blog-post';
 
 export interface Activity {
   id: string;
@@ -66,6 +67,8 @@ const App: React.FC = () => {
         return <ToolsPage onNavigate={handleNavigate} />;
       case 'current-affairs':
         return <CurrentAffairsPage onNavigate={handleNavigate} onAction={addActivity} />;
+      case 'daily-feed':
+        return <DailyFeedPage onNavigate={handleNavigate} onAction={addActivity} />;
       case 'community':
         return <CommunityPage onNavigate={handleNavigate} />;
       case 'contact':

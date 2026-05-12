@@ -2,9 +2,13 @@ import React, { useState, FormEvent } from 'react';
 import { Page } from '../App';
 import { PlannerIcon } from '../components/icons/PlannerIcon';
 import { BackIcon } from '../components/icons/BackIcon';
+import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { Loader } from '../components/Loader';
 import { AnswerDisplay } from '../components/AnswerDisplay';
 import { generateStudyPlan, StudyPlanParams } from '../services/geminiService';
+import { FileText } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface StudyPlannerPageProps {
   onNavigate: (page: Page) => void;
@@ -71,38 +75,88 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, 
       await generatePlan();
   }
 
-  const handleDownloadPlan = () => {
+  const handleDownloadPlan = async () => {
     if (!plan) return;
-
-    const title = `Study Plan: ${formData.exam}`;
-    const printWindow = window.open('', '_blank');
     
-    printWindow?.document.write(`
-        <html>
-            <head>
-                <title>${title}</title>
-                <style>
-                    body { font-family: 'Inter', sans-serif; line-height: 1.6; padding: 3rem; color: #1f2937; max-width: 800px; margin: 0 auto; }
-                    h1 { font-size: 2.5rem; font-weight: 800; color: #111827; margin-bottom: 2rem; border-bottom: 4px solid #3b82f6; padding-bottom: 1rem; }
-                    h2 { font-size: 1.8rem; font-weight: 700; color: #1f2937; margin-top: 2rem; }
-                    h3 { font-size: 1.3rem; font-weight: 600; color: #374151; }
-                    p { margin-bottom: 1rem; }
-                    strong { color: #1d4ed8; }
-                    @media print {
-                        body { padding: 0; }
-                    }
-                </style>
-            </head>
-            <body>
-                <h1>${title}</h1>
-                <div class="content">${plan.replace(/\n/g, '<br/>')}</div>
-            </body>
-        </html>
-    `);
+    setIsLoading(true);
+    try {
+      // Create a temporary container for the PDF content to avoid styling issues
+      const pdfWrapper = document.createElement('div');
+      pdfWrapper.style.position = 'fixed';
+      pdfWrapper.style.top = '0';
+      pdfWrapper.style.left = '0';
+      pdfWrapper.style.width = '1000px';
+      pdfWrapper.style.zIndex = '-9999';
+      pdfWrapper.style.opacity = '1';
+      
+      const container = document.createElement('div');
+      container.className = 'pdf-export-container p-12 bg-white';
+      
+      const header = document.createElement('div');
+      header.className = 'mb-12 border-b-4 border-blue-600 pb-6';
+      header.innerHTML = `
+        <h1 style="font-size: 32px; font-weight: 800; color: #111827; margin: 0;">Study Plan: ${formData.exam}</h1>
+        <p style="color: #6b7280; margin-top: 8px; font-weight: 500;">Duration: ${formData.duration} • Load: ${formData.dailyHours}hrs/day</p>
+      `;
+      
+      const content = document.createElement('div');
+      content.className = 'markdown-body';
+      content.innerHTML = plan.replace(/\n/g, '<br/>'); // Simple conversion for the snapshot
+      
+      container.appendChild(header);
+      container.appendChild(content);
+      
+      const footer = document.createElement('div');
+      footer.className = 'mt-12 pt-6 border-t border-gray-100 text-[10px] text-gray-400 text-center uppercase tracking-widest font-bold';
+      footer.innerText = 'Gov Exam AI Prep • Study hard, stay consistent.';
+      container.appendChild(footer);
 
-    printWindow?.document.close();
-    printWindow?.focus();
-    setTimeout(() => printWindow?.print(), 500);
+      pdfWrapper.appendChild(container);
+      document.body.appendChild(pdfWrapper);
+
+      // Wait for layout
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 1000
+      });
+      
+      document.body.removeChild(pdfWrapper);
+      
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210; 
+      const pageHeight = 297; 
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      // Page 1
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= pageHeight;
+      
+      // Subsequent Pages
+      const overlap = 2;
+      while (heightLeft > 0) {
+        position = (heightLeft - imgHeight) + overlap;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= (pageHeight - overlap);
+      }
+      
+      pdf.save(`study_plan_${formData.exam.toLowerCase().replace(/\s+/g, '_')}.pdf`);
+      if (onAction) onAction('Downloaded master study plan PDF', 'success');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. You can still use the print button in the browser.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formInputClass = "w-full p-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-lg font-medium";
@@ -232,6 +286,19 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, 
                 </div>
             )}
             
+            {plan && !isLoading && (
+              <div className="flex justify-between items-center mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Master Strategy Output</h2>
+                <button 
+                  onClick={handleDownloadPlan}
+                  className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 group"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span className="text-[10px] uppercase tracking-widest">Download PDF Plan</span>
+                </button>
+              </div>
+            )}
+
             <div className="relative">
                 {isLoading && !plan ? (
                     <div className="bg-white p-20 rounded-[40px] shadow-xl border border-gray-50 flex flex-col items-center justify-center text-center">
@@ -244,7 +311,6 @@ export const StudyPlannerPage: React.FC<StudyPlannerPageProps> = ({ onNavigate, 
                         answer={plan || "### Your study plan will appear here\nFill out the form on the left to generate a comprehensive, AI-powered study schedule for your target exam."} 
                         title={plan ? `${formData.exam} - Master Plan` : "Roadmap Preview"}
                         onRefresh={plan ? handleRefresh : undefined}
-                        onDownload={plan ? handleDownloadPlan : undefined}
                         isLoading={isLoading}
                     />
                 )}

@@ -16,18 +16,21 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
     const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [date, setDate] = useState('');
+    const [toDate, setToDate] = useState('');
     const [exam, setExam] = useState('All Exams');
     const [activeSearch, setActiveSearch] = useState('Latest National News');
     const [activeDate, setActiveDate] = useState('');
+    const [activeToDate, setActiveToDate] = useState('');
     const [activeExam, setActiveExam] = useState('All Exams');
     const [isLoading, setIsLoading] = useState(true);
     const [isRegenerating, setIsRegenerating] = useState(false);
     const [error, setError] = useState('');
 
-    const fetchNews = useCallback(async (topic: string, searchDate?: string, examFilter?: string) => {
+    const fetchNews = useCallback(async (topic: string, searchDate?: string, examFilter?: string, searchToDate?: string) => {
         setError('');
         try {
-            const data = await getCurrentAffairs(topic, searchDate, examFilter);
+            const dateRange = searchToDate ? `${searchDate} to ${searchToDate}` : searchDate;
+            const data = await getCurrentAffairs(topic, dateRange, examFilter);
             setNewsItems(data.articles);
             if (onAction && topic !== 'Latest National News') {
                 onAction(`Searched current affairs for "${topic}"`, 'news');
@@ -41,28 +44,29 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
     useEffect(() => {
         const loadInitialNews = async () => {
             setIsLoading(true);
-            await fetchNews(activeSearch, activeDate, activeExam);
+            await fetchNews(activeSearch, activeDate, activeExam, activeToDate);
             setIsLoading(false);
         };
         loadInitialNews();
-    }, [activeSearch, activeDate, activeExam, fetchNews]);
+    }, [activeSearch, activeDate, activeExam, activeToDate, fetchNews]);
 
     const handleSearch = (e: FormEvent) => {
         e.preventDefault();
         let newSearch = searchQuery.trim();
-        if (!newSearch && (date || exam !== 'All Exams')) {
+        if (!newSearch && (date || toDate || exam !== 'All Exams')) {
             newSearch = 'Latest National News';
-        } else if (!newSearch && !date && exam === 'All Exams') {
+        } else if (!newSearch && !date && !toDate && exam === 'All Exams') {
             newSearch = 'Latest National News';
         }
         setActiveSearch(newSearch);
         setActiveDate(date);
+        setActiveToDate(toDate);
         setActiveExam(exam);
     };
 
     const handleRegenerate = async () => {
         setIsRegenerating(true);
-        await fetchNews(activeSearch, activeDate, activeExam);
+        await fetchNews(activeSearch, activeDate, activeExam, activeToDate);
         setIsRegenerating(false);
     }
 
@@ -151,20 +155,37 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
             </header>
 
             <div className="sticky top-20 z-40 bg-[#FBFCFD]/80 backdrop-blur-md -mx-4 px-4 py-3 mb-10 border-b border-gray-100">
-                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-3">
-                    <div className="md:col-span-6 relative">
+                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    <div className="md:col-span-3 relative">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Search Topic</label>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Filter by topic (e.g. Finance Commission)..."
+                            placeholder="Topic (e.g. Finance)..."
                             className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold placeholder:text-gray-300 uppercase tracking-widest"
                         />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        </div>
+                    </div>
+                    <div className="md:col-span-2">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">From Date</label>
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
+                        />
+                    </div>
+                    <div className="md:col-span-2">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">To Date (Optional)</label>
+                        <input
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
+                        />
                     </div>
                     <div className="md:col-span-3">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Exam Filter</label>
                         <select
                             value={exam}
                             onChange={(e) => setExam(e.target.value)}
@@ -176,12 +197,12 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                             <option>Banking</option>
                         </select>
                     </div>
-                    <div className="md:col-span-3">
+                    <div className="md:col-span-2">
                          <button
                             type="submit"
-                            className="w-full h-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-[10px] font-black uppercase tracking-[0.2em]"
+                            className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-[10px] font-black uppercase tracking-[0.1em]"
                         >
-                            Update Feed
+                            Update
                         </button>
                     </div>
                 </form>

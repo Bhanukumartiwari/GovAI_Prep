@@ -5,8 +5,16 @@ import { GoalsIcon } from '../components/icons/GoalsIcon';
 import { QuizIcon } from '../components/icons/QuizIcon';
 import { ChatIcon } from '../components/icons/ChatIcon';
 import { BackIcon } from '../components/icons/BackIcon';
+import { Zap } from 'lucide-react';
 
 const features = [
+    {
+        icon: <Zap className="w-5 h-5 fill-indigo-600/20" />,
+        title: "Daily Intelligence",
+        description: "Your automated Top 20 feed: 10 Current Affairs & 10 Static GK facts for today.",
+        button: "View Daily Feed",
+        page: 'daily-feed' as Page
+    },
     {
         icon: <GoalsIcon />,
         title: "Daily Goals",
@@ -18,12 +26,6 @@ const features = [
         title: "Quick Quiz",
         description: "Test your knowledge with a short quiz on 'Indian Polity'.",
         button: "Start Quiz"
-    },
-    {
-        icon: <ChatIcon />,
-        title: "Study Group",
-        description: "Join the discussion on 'Modern History' with fellow aspirants.",
-        button: "Join Chat"
     }
 ];
 
@@ -82,7 +84,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate, activi
                     {features.map((feature, index) => (
                         <div 
                             key={index} 
-                            className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col"
+                            onClick={() => feature.page && onNavigate(feature.page)}
+                            className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col ${feature.page ? 'cursor-pointer' : ''}`}
                         >
                             <div className="w-10 h-10 bg-gray-50 group-hover:bg-blue-600 group-hover:text-white rounded-xl text-blue-600 flex items-center justify-center mb-5 transition-colors">
                                 {feature.icon}
@@ -100,7 +103,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate, activi
                             )}
                             
                             {feature.button && (
-                                <button className="mt-auto w-full py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-900 font-bold rounded-lg transition-colors text-xs">
+                                <button className="mt-auto w-full py-2.5 bg-gray-50 group-hover:bg-blue-600 group-hover:text-white text-gray-900 group-hover:shadow-lg group-hover:shadow-blue-500/20 font-bold rounded-lg transition-all text-xs">
                                     {feature.button}
                                 </button>
                             )}

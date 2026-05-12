@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Zap } from 'lucide-react';
 import { Page } from '../App';
 import { DoubtSolver } from '../components/DoubtSolver';
 import { PlannerIcon } from '../components/icons/PlannerIcon';
@@ -14,6 +14,12 @@ interface HomePageProps {
 }
 
 const features = [
+    {
+        icon: <Zap className="w-5 h-5 fill-indigo-600/20" />,
+        title: "Daily Intelligence Feed",
+        description: "Automated daily briefing of top 10 Current Affairs and 10 Static GK facts curated for your success.",
+        page: 'daily-feed' as Page
+    },
     {
         icon: <PlannerIcon />,
         title: "AI Study Planner",

@@ -475,3 +475,163 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
     throw new Error(`Failed to fetch current affairs: ${formatAiError(error)}`);
   }
 };
+
+export interface DailyFeedItem {
+  title: string;
+  summary: string;
+  context: string;
+  significance?: string;
+  relevance: string;
+  keyFacts: string[];
+  category: 'Current Affairs' | 'Static GK';
+}
+
+export interface DailyFeedResponse {
+  currentAffairs: DailyFeedItem[];
+  staticGk: DailyFeedItem[];
+}
+
+export const getDailyFeed = async (): Promise<DailyFeedResponse> => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return { currentAffairs: [], staticGk: [] };
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const model = 'gemini-3-flash-preview';
+    const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    
+    const prompt = `Provide the "Daily Intelligence Feed" for Indian Government Exam aspirants (UPSC, SSC, Banking) for today, ${today}.
+    
+    The response must follow this EXACT professional editorial style:
+    - 10 News Items for "Current Affairs".
+    - 10 Concept/Fact Items for "Static GK".
+    
+    For each item, provide:
+    - 'title': A bold headline.
+    - 'summary': 1-2 sentences of the core news/fact.
+    - 'context': The historical or situational background (e.g., "The day commemorates...", "India suspended treaty proceedings...").
+    - 'significance': (Optional) Why it matters or the deeper impact (e.g., "The backbone of India's financial inclusion drive").
+    - 'relevance': Mapping to specific exams/papers (e.g., "UPSC GS-III (Science & Tech)", "SSC CGL (Modern History)").
+    - 'keyFacts': A list of 3-4 "Must-Know" data points (dates, numbers, articles, names).
+    
+    Formatting Guidelines:
+    - For Static GK, pick a high-weightage theme (like Mughal Empire, Indian Polity, Rivers of India) and provide 10 critical data units from it.
+    - Style: Professional, succinct, and exam-focused.
+    
+    Structure the response as a JSON object with two arrays: 'currentAffairs' and 'staticGk'.`;
+
+    const response = await ai.models.generateContent({
+      model,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            currentAffairs: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  title: { type: Type.STRING },
+                  summary: { type: Type.STRING },
+                  context: { type: Type.STRING },
+                  significance: { type: Type.STRING },
+                  relevance: { type: Type.STRING },
+                  keyFacts: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                  },
+                  category: { type: Type.STRING, enum: ["Current Affairs"] }
+                },
+                required: ["title", "summary", "context", "relevance", "keyFacts", "category"]
+              }
+            },
+            staticGk: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  title: { type: Type.STRING },
+                  summary: { type: Type.STRING },
+                  context: { type: Type.STRING },
+                  significance: { type: Type.STRING },
+                  relevance: { type: Type.STRING },
+                  keyFacts: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                  },
+                  category: { type: Type.STRING, enum: ["Static GK"] }
+                },
+                required: ["title", "summary", "context", "relevance", "keyFacts", "category"]
+              }
+            }
+          },
+          required: ["currentAffairs", "staticGk"]
+        }
+      }
+    });
+
+    const jsonStr = response.text || '{"currentAffairs": [], "staticGk": []}';
+    return JSON.parse(jsonStr) as DailyFeedResponse;
+    
+  } catch (error: any) {
+    throw new Error(`Failed to fetch daily feed: ${formatAiError(error)}`);
+  }
+};
+
+export interface FactExpansionResponse {
+  fact: string;
+  explanation: string;
+  quickTakeaways: string[];
+  relatedArticles: string[];
+}
+
+export const getFactExpansion = async (fact: string): Promise<FactExpansionResponse> => {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('API key is not configured.');
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const model = 'gemini-3-flash-preview';
+    const prompt = `Provide an in-depth expansion for the following GK/Current Affairs fact for competitive exams: "${fact}".
+    
+    The response must include:
+    1. A detailed but concise explanation of the fact.
+    2. 3-4 'Quick Takeaways' for active recall.
+    3. 2-3 Related concepts or constitutional articles/sections if applicable.
+    
+    Structure the response as a JSON object.`;
+
+    const response = await ai.models.generateContent({
+      model,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            fact: { type: Type.STRING },
+            explanation: { type: Type.STRING },
+            quickTakeaways: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            relatedArticles: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ["fact", "explanation", "quickTakeaways", "relatedArticles"]
+        }
+      }
+    });
+
+    const jsonStr = response.text || '{}';
+    return JSON.parse(jsonStr) as FactExpansionResponse;
+  } catch (error: any) {
+    throw new Error(`Failed to expand fact: ${formatAiError(error)}`);
+  }
+};
