@@ -8,6 +8,8 @@ import { CheckCircleIcon } from '../components/icons/CheckCircleIcon';
 import { XCircleIcon } from '../components/icons/XCircleIcon';
 import { Page } from '../App';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
+import { Share2, Send } from 'lucide-react';
+import { shareContent } from '../lib/exportUtils';
 
 const exams = [
   { id: 'upsc', name: 'UPSC', description: 'Union Public Service Commission exams like Civil Services, CDS, etc.' },
@@ -512,6 +514,21 @@ export const MockTestsPage: React.FC<MockTestsPageProps> = ({ onNavigate, onActi
                         <button onClick={() => handleStartTest(activeTest.name.split(': ')[1], activeTest.difficulty)} className="px-6 py-3 bg-blue-600 text-white text-[10px] font-bold rounded-xl shadow-md hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-widest">Retry Simulation</button>
                         <button onClick={handleDownloadResults} className="px-6 py-3 bg-gray-900 text-white text-[10px] font-bold rounded-xl shadow-md hover:bg-black transition-all active:scale-95 uppercase tracking-widest flex items-center gap-2">
                             <DownloadIcon /> Export
+                        </button>
+                        <button 
+                            onClick={() => {
+                                const text = `*Mission Accomplished: ${activeTest.name}*\n\nScore: ${results.score}%\nAccuracy: ${results.correct}/${activeTest.questions.length}\n\nChallenge yourself at Prep AI!`;
+                                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                            }}
+                            className="px-6 py-3 bg-emerald-600 text-white text-[10px] font-bold rounded-xl shadow-md hover:bg-emerald-700 transition-all active:scale-95 uppercase tracking-widest flex items-center gap-2"
+                        >
+                            <Send className="w-4 h-4" /> WhatsApp
+                        </button>
+                        <button 
+                            onClick={() => shareContent(`Performance Report: ${activeTest.name}`, `I scored ${results.score}% on my Prep AI mock test tracking for ${selectedExam?.name}.`)}
+                            className="px-6 py-3 bg-blue-50 text-blue-600 border border-blue-100 text-[10px] font-bold rounded-xl hover:bg-blue-100 transition-all active:scale-95 uppercase tracking-widest flex items-center gap-2"
+                        >
+                            <Share2 className="w-4 h-4" /> Share
                         </button>
                         <button onClick={handleReset} className="px-6 py-3 bg-white text-gray-400 border border-gray-100 text-[10px] font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-95 uppercase tracking-widest">Dashboard</button>
                     </div>

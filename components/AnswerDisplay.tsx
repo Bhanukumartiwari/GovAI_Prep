@@ -7,7 +7,8 @@ import { LightbulbIcon } from './icons/LightbulbIcon';
 import { RefreshIcon } from './icons/RefreshIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { DownloadIcon } from './icons/DownloadIcon';
-import { FileText, BookOpen } from 'lucide-react';
+import { FileText, BookOpen, Send, Share2 } from 'lucide-react';
+import { shareContent, shareToWhatsApp } from '../lib/exportUtils';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -175,6 +176,26 @@ export const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
             {copied ? <CheckIcon /> : <CopyIcon />}
             <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
           </button>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => {
+                const text = `*${title}*\n\n${answer}`;
+                shareToWhatsApp(text);
+              }}
+              className={`${actionButtonClasses} bg-[#25D366]/10 text-[#075E54] hover:bg-[#25D366]/20 border border-[#25D366]/20`}
+              title="Share on WhatsApp"
+            >
+              <Send className="w-4 h-4" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </button>
+            <button 
+              onClick={() => shareContent(title, answer.substring(0, 300))}
+              className={`${actionButtonClasses} bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200`}
+              title="Share Content"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
       <div className="markdown-body text-left">

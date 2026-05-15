@@ -30,13 +30,25 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
     }
     setError('');
 
+    let isRequestPending = true;
+    // Safety timeout to prevent infinite scroll if something stalls
+    const timeout = setTimeout(() => {
+      if (isRequestPending) {
+        setError('The AI is taking longer than usual. This can happen for large question counts or complex topics. Still working...');
+      }
+    }, 45000);
+
     try {
       const result = await generateMcqQuiz(topic, count, exam, difficulty);
+      isRequestPending = false;
+      clearTimeout(timeout);
       setQuiz(result);
       if (onAction) {
         onAction(`Generated a ${count}-question quiz on ${topic} (${exam})`, 'quiz');
       }
     } catch (err) {
+      isRequestPending = false;
+      clearTimeout(timeout);
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       setQuiz(null); // Clear quiz on error
       console.error(err);
@@ -199,10 +211,11 @@ export const QuestionGeneratorPage: React.FC<QuestionGeneratorPageProps> = ({ on
                         className={formInputClass}
                         required
                     >
-                        <option value={5}>05 Questions</option>
+                        <option value={5}>05 Questions (Fastest)</option>
                         <option value={10}>10 Questions</option>
-                        <option value={25}>25 Questions</option>
-                        <option value={50}>50 Questions</option>
+                        <option value={15}>15 Questions</option>
+                        <option value={20}>20 Questions</option>
+                        <option value={30}>30 Questions (Slowest)</option>
                     </select>
                 </div>
                 <div className="md:col-span-4">

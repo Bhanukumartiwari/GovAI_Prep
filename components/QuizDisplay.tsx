@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { QuizResponse } from '../services/geminiService';
 import { CheckIcon } from './icons/CheckIcon';
 import { RefreshIcon } from './icons/RefreshIcon';
 import { DownloadIcon } from './icons/DownloadIcon';
+import { BookOpen, Zap, Send, Share2 } from 'lucide-react';
+import { shareContent } from '../lib/exportUtils';
+import { Loader } from './Loader';
 
 interface QuizDisplayProps {
   quizData: QuizResponse;
@@ -38,9 +43,27 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({ quizData, onRegenerate
           )}
           {onDownload && (
             <button onClick={onDownload} disabled={isRegenerating} className={actionButtonClasses} title="Download as PDF">
-              <DownloadIcon /> Download
+              <DownloadIcon /> <span className="hidden sm:inline">Download</span>
             </button>
           )}
+          <button 
+            onClick={() => {
+              const text = `*Practice Quiz Topic: ${quizData.quiz[0]?.question.substring(0, 50) || 'Competitive Exam'}*\n\nChallenge yourself with this quiz!\n\nRead more at Prep AI`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            }}
+            className={`${actionButtonClasses} bg-emerald-50 text-emerald-600 hover:bg-emerald-100`}
+            title="Share on WhatsApp"
+          >
+            <Send className="w-4 h-4" />
+            <span className="hidden sm:inline">WhatsApp</span>
+          </button>
+          <button 
+            onClick={() => shareContent('Prep AI Quiz', 'Practice with this AI generated quiz for government exams!')}
+            className={`${actionButtonClasses} bg-indigo-50 text-indigo-600 hover:bg-indigo-100`}
+            title="Share Quiz"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
       {quizData.quiz.map((q, index) => (
@@ -72,16 +95,27 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({ quizData, onRegenerate
           <div className="mt-4 flex flex-col gap-4">
             {revealedAnswers[index] && (
               <div className="space-y-3">
-                <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-md">
-                  <p className="text-sm font-bold text-blue-800 mb-1">Explanation:</p>
-                  <p className="text-sm text-blue-700">{q.explanation}</p>
+                <div className="p-5 bg-indigo-50/50 border-l-4 border-indigo-500 rounded-r-2xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BookOpen className="w-4 h-4 text-indigo-600" />
+                    <p className="text-xs font-black text-indigo-600 uppercase tracking-widest">Masterclass Explanation</p>
+                  </div>
+                  <div className="markdown-body text-sm text-slate-700 leading-relaxed font-medium">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{q.explanation}</ReactMarkdown>
+                  </div>
                 </div>
                 {q.relatedFacts && q.relatedFacts.length > 0 && (
-                  <div className="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-md">
-                    <p className="text-sm font-bold text-amber-800 mb-2">Important Related Facts:</p>
-                    <ul className="list-disc list-inside space-y-1">
+                  <div className="p-5 bg-emerald-50/50 border-l-4 border-emerald-500 rounded-r-2xl">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Zap className="w-4 h-4 text-emerald-600" />
+                      <p className="text-xs font-black text-emerald-600 uppercase tracking-widest">Extra Edge Strategy</p>
+                    </div>
+                    <ul className="space-y-3">
                       {q.relatedFacts.map((fact, factIndex) => (
-                        <li key={factIndex} className="text-sm text-amber-800">{fact}</li>
+                        <li key={factIndex} className="flex items-start gap-2 text-sm text-slate-700 font-medium">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{fact}</ReactMarkdown>
+                        </li>
                       ))}
                     </ul>
                   </div>

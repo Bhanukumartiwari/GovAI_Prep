@@ -9,6 +9,8 @@ import remarkGfm from 'remark-gfm';
 import { QuizDisplay } from '../components/QuizDisplay';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { RefreshIcon } from '../components/icons/RefreshIcon';
+import { Send, Share2 } from 'lucide-react';
+import { shareContent } from '../lib/exportUtils';
 import { FileTextIcon } from '../components/icons/FileTextIcon';
 import { CameraIcon } from '../components/icons/CameraIcon';
 
@@ -31,6 +33,11 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
 
     const processHandwritten = async (selectedFile: File) => {
         setIsLoading(true);
+        setError(null);
+        setAnalysis('');
+        setQuiz(null);
+        setExtractedText('');
+        
         try {
             let parts: { inlineData: { data: string; mimeType: string } }[] = [];
             if (selectedFile.type.startsWith('image/')) {
@@ -44,11 +51,12 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
             if (parts.length === 0) throw new Error('Could not process document as images.');
             
             setImageParts(parts);
+            setIsHandwrittenMode(true);
             const summary = await analyzeDocumentMultimodal(parts);
             setAnalysis(summary);
-            setIsHandwrittenMode(true);
         } catch (err: any) {
             setError(err.message || 'Error processing handwritten note.');
+            setIsHandwrittenMode(false);
         } finally {
             setIsLoading(false);
         }
@@ -267,22 +275,52 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
                            </div>
                         </div>
 
-                        {error && (
-                            <div className="mt-8 p-6 bg-red-50 text-red-700 border-l-4 border-red-500 rounded-r-2xl font-bold animate-pulse">
-                                {error}
+                        {file?.type === 'application/pdf' && !isHandwrittenMode && analysis && (
+                            <div className="mt-8 p-6 bg-blue-50/50 rounded-[32px] border border-blue-100">
+                                <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-3">AI Recommendation</p>
+                                <p className="text-xs text-blue-700 font-medium leading-relaxed mb-4">
+                                    Processed via text extraction. If results are poor (e.g. for scanned documents), Vision OCR might be better.
+                                </p>
+                                <button 
+                                    onClick={() => processHandwritten(file)}
+                                    className="w-full py-3 bg-white border border-blue-200 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                >
+                                    Switch to Vision OCR
+                                </button>
                             </div>
                         )}
-                    </div>
-                </div>
 
-                <div className="lg:col-span-3">
-                    {isLoading ? (
-                        <div className="bg-white p-20 rounded-[40px] shadow-xl border border-gray-50 flex flex-col items-center justify-center text-center">
-                            <Loader />
-                            <h3 className="mt-8 text-2xl font-bold text-gray-900 font-display">Analyzing Document...</h3>
-                            <p className="text-gray-500 mt-2 font-medium">Running Vision OCR and semantic extraction.</p>
+                {error && (
+                    <div className="mt-8 space-y-4">
+                        <div className="p-6 bg-red-50 text-red-700 border-l-4 border-red-500 rounded-r-2xl font-bold">
+                            {error}
                         </div>
-                    ) : (analysis || quiz) ? (
+                        {file?.type === 'application/pdf' && !isHandwrittenMode && (
+                            <button
+                                onClick={() => processHandwritten(file)}
+                                className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all flex items-center justify-center gap-3 active:scale-95"
+                            >
+                                <CameraIcon />
+                                <span>Try Vision OCR Mode (Process as Images)</span>
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+
+        <div className="lg:col-span-3">
+            {isLoading ? (
+                <div className="bg-white p-20 rounded-[40px] shadow-xl border border-gray-50 flex flex-col items-center justify-center text-center">
+                    <Loader />
+                    <h3 className="mt-8 text-2xl font-bold text-gray-900 font-display transition-all duration-500">
+                        {isHandwrittenMode ? 'Running Vision OCR...' : 'Analyzing Document...'}
+                    </h3>
+                    <p className="text-gray-500 mt-2 font-medium">
+                        {isHandwrittenMode ? 'Converting PDF pages to images for deep visual analysis.' : 'Running semantic extraction and summaries.'}
+                    </p>
+                </div>
+            ) : (analysis || quiz) ? (
                         <div className="bg-white rounded-[40px] shadow-sm border border-gray-50 overflow-hidden min-h-[600px]">
                             <div className="flex bg-gray-50 p-2 gap-2">
                                 <button
@@ -310,6 +348,23 @@ export const DocumentAnalyzerPage: React.FC<DocumentAnalyzerPageProps> = ({ onNa
                                     <div className="flex gap-2">
                                         <button onClick={handleRegenerate} className="p-3 bg-gray-50 hover:bg-gray-100 text-gray-900 rounded-xl transition-colors"><RefreshIcon /></button>
                                         <button onClick={handleDownloadPdf} className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:scale-105 active:scale-95 transition-all text-sm leading-none"><DownloadIcon /> Export PDF</button>
+                                        <button 
+                                            onClick={() => {
+                                                const text = `*Note Summary: ${file?.name || 'My Study Material'}*\n\nExtracted core concepts using Prep AI!\n\nRead more at Prep AI`;
+                                                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                                            }} 
+                                            className="p-3 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl transition-colors"
+                                            title="Share on WhatsApp"
+                                        >
+                                            <Send className="w-5 h-5" />
+                                        </button>
+                                        <button 
+                                            onClick={() => shareContent('Study Note Summary', `Check out my analyzed note session for ${file?.name || 'my study material'}`)}
+                                            className="p-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-colors"
+                                            title="Share Summary"
+                                        >
+                                            <Share2 className="w-5 h-5" />
+                                        </button>
                                     </div>
                                 </div>
 

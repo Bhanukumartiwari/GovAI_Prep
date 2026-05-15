@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getApiKey = () => {
@@ -12,7 +11,6 @@ const getApiKey = () => {
 const formatAiError = (error: any): string => {
   console.error('Gemini API Error:', error);
   
-  // Try to parse error message if it's a JSON string (common with @google/genai 429s)
   let message = error?.message || 'An unknown error occurred';
   
   try {
@@ -37,8 +35,15 @@ const formatAiError = (error: any): string => {
     return "AI usage limit reached. Please wait about a minute before trying again.";
   }
 
+  if (message.includes('404')) {
+    return "The requested AI model was not found. Please try again or contact support.";
+  }
+
   return message;
 };
+
+// Use the recommended model alias from the skill
+const MODEL_NAME = 'gemini-3-flash-preview';
 
 export const getAnswerFromGemini = async (question: string): Promise<string> => {
   const apiKey = getApiKey();
@@ -48,14 +53,12 @@ export const getAnswerFromGemini = async (question: string): Promise<string> => 
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    // Use gemini-3-flash-preview for best performance and latest features
-    const model = 'gemini-3-flash-preview';
     
     const response = await ai.models.generateContent({
-        model: model,
+        model: MODEL_NAME,
         contents: question,
         config: {
-            systemInstruction: "You are an expert AI mentor for Indian government exam preparation (UPSC, SSC, Banking, State PSC). Your goal is to provide clear, accurate, and highly structured information that helps students learn faster.\n\n**Response Structure (MANDATORY):**\n1. 📌 **Quick Summary**: A concise 2-3 sentence overview.\n2. 📖 **Concept (Detailed Explanation)**: Deep dive into the topic with **bolded keywords**.\n3. ⚡ **Direct Facts (One-Liners for SSC / Railway / BSSC)**: Bulleted list of factual points.\n4. 🎯 **Exam-Specific Facts (Must-Know)**: Key takeaways for major exams.\n5. 📚 **PYQ Hint**: Information about how this topic has appeared in previous years' questions.\n6. 🔗 **Related Topics & Additional Facts**: Extra context or connected concepts.\n7. 🌐 **Historical & Current Context**: If applicable, the background and latest updates.\n8. 📝 **Practice MCQs**: 2-3 relevant multiple-choice questions with answers.\n\n**Formatting Rules:**\n- Use clear Markdown headers (##, ###).\n- **Always bold** important terms, dates, and names.\n- Use emojis at the start of each major section as shown above.\n- Ensure any tables are cleanly formatted for readability.\n- Maintain a professional, authoritative, and encouraging tone."
+          systemInstruction: "You are an elite AI Mentor for Indian Government Exam preparation (UPSC, SSC, Banking, State PSC). Your mission is to provide the most authoritative, detailed, and pedagogically sound explanations possible.\n\n**RESPONSE STANDARDS:**\n- **Depth**: Go beyond surface-level facts. Explain 'Why' and 'How'.\n- **Structure**: Use the mandatory sections below.\n- **Precision**: Use exact administrative terms, constitutional articles, and economic theories.\n- **Pedagogy**: Use analogies to explain complex concepts.\n\n**MANDATORY RESPONSE STRUCTURE:**\n1. 📌 **Quick Strategy**: A 2-sentence executive summary for rapid revision.\n2. 📖 **Concept Deep-Dive**: Detailed explanation with **bolded keywords**. Use sub-headings for clarity.\n3. ⚖️ **Critical Analysis (UPSC Perspective)**: Discuss pros/cons, implications, or legal significance.\n4. ⚡ **SSC/PSC One-Liners**: Bulleted list of high-yield facts (Dates, Names, Locations).\n5. 🎯 **Exam Relevance & PYQ Patterns**: Mention which year/exam similar questions appeared and the level of importance.\n6. 📚 **Must-Know Terminology**: Definitions of technical terms used in the explanation.\n7. 🔗 **Integrated Learning**: Connect this topic with other subjects (e.g., History with Polity).\n8. 📝 **Practice MCQ Batch**: Exactly 2 high-quality MCQ with detailed answer justifications.\n\n**Formatting Guidelines:**\n- Use clear Markdown headers (##, ###).\n- **Strict bolding** of dates, names, and crucial data.\n- Professional and encouraging tone."
         }
     });
     
@@ -84,18 +87,19 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
-        const prompt = `Generate a high-quality multiple-choice quiz with ${count} questions on the topic: "${topic}". 
-        The questions must be highly relevant for the **${exam}** exam at a **${difficulty}** difficulty level. 
+        const prompt = `Act as an expert examiner for **${exam}**. Generate a high-quality assessment with exactly ${count} questions on the topic: "${topic}" at a **${difficulty}** level. 
         
-        For each question:
-        1. Provide 4 distinct options (A, B, C, D).
-        2. Indicate the correct answer key.
-        3. Provide a clear, educational explanation that not only gives the answer but explains 'why'.
-        4. List 2-3 'Extra Edge' facts related to the question that are frequently asked in competitive exams.`;
+        **Quality Guidelines:**
+        1. **Distractors**: Options must be plausible "traps" that test deep understanding, not just obvious wrong answers.
+        2. **Logical Reasoning**: Include questions that require conceptual application, not just rote memorization.
+        3. **Explanation Quality**: The explanation MUST include: 
+           - Why the correct option is right.
+           - Why the other options are wrong (Elimination technique).
+           - The core concept or Article/Section/Formula involved.
+        4. **Extra Edge Facts**: Provide 2-3 "Must-Remember" data points related to the question that appear frequently in PYQs (Previous Year Questions).`;
 
         const response = await ai.models.generateContent({
-            model: model,
+            model: MODEL_NAME,
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -134,11 +138,20 @@ export const generateMcqQuiz = async (topic: string, count: number, exam: string
             }
         });
         
-        const jsonStr = response.text || '{"quiz": []}';
-        return JSON.parse(jsonStr) as QuizResponse;
+        const text = response.text;
+        if (!text) {
+             throw new Error('Empty response from AI.');
+        }
+
+        try {
+            return JSON.parse(text) as QuizResponse;
+        } catch (parseError) {
+            console.error('JSON Parse Error. Raw text:', text);
+            throw new Error('Analysis synthesis failed format validation. Please try again.');
+        }
 
     } catch (error: any) {
-        throw new Error(`Failed to generate quiz: ${formatAiError(error)}`);
+        throw new Error(`${formatAiError(error)}`);
     }
 }
 
@@ -155,7 +168,6 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
     const prompt = `Create a highly structured, week-by-week study plan for a student preparing for the **${exam}** exam.
     
     **Student Profile:**
@@ -171,7 +183,7 @@ export const generateStudyPlan = async ({ exam, subjects, duration, dailyHours }
     5. Use clear Markdown formatting with bold text for emphasis.`;
 
     const response = await ai.models.generateContent({
-      model: model,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         systemInstruction: "You are an expert academic counselor for Indian competitive exams. Your plans are realistic, motivating, and designed for maximum memory retention."
@@ -190,7 +202,6 @@ export const getExamInfo = async (exam: string): Promise<string> => {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
     const prompt = `
       Provide a highly detailed, student-friendly, and structured overview for the **${exam}** examination. 
       
@@ -215,7 +226,7 @@ export const getExamInfo = async (exam: string): Promise<string> => {
     `;
 
     const response = await ai.models.generateContent({
-      model: model,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         systemInstruction: "You are an expert exam counselor specializing in Indian government exams. Your goal is to make complex exam notifications easy to understand for beginners."
@@ -234,7 +245,6 @@ export const analyzeDocument = async (text: string): Promise<string> => {
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
         const prompt = `
           Analyze the following study material and provide a student-friendly summary.
           
@@ -248,7 +258,7 @@ export const analyzeDocument = async (text: string): Promise<string> => {
         `;
 
         const response = await ai.models.generateContent({
-            model: model,
+            model: MODEL_NAME,
             contents: prompt,
             config: {
                 systemInstruction: "You are an expert study material analyzer who turns complex academic text into easy-to-read study notes."
@@ -267,11 +277,18 @@ export const generateQuestionsFromText = async (text: string, count: number = 5)
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
-        const prompt = `Based on this text, generate ${count} high-quality MCQs for competitive exams. Output in JSON. TEXT: ${text}`;
+        const prompt = `Analyze the provided text and synthesize ${count} high-quality, exam-standard MCQs. 
+        
+        **Requirements:**
+        - **Question Focus**: Target the most exam-relevant portions of the text.
+        - **Distractors**: Create high-quality distractors that require precise knowledge.
+        - **Detailed Solution**: Each explanation MUST explain the logic, link back to the text, and provide tips for similar questions.
+        - **Strategic Facts**: Include 'Extra Edge' items that expand on the text's data.
+        
+        TEXT: ${text}`;
 
         const response = await ai.models.generateContent({
-            model: model,
+            model: MODEL_NAME,
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -323,7 +340,6 @@ export const analyzeDocumentMultimodal = async (imageParts: { inlineData: { data
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
         
         const textPart = {
             text: `
@@ -338,8 +354,8 @@ export const analyzeDocumentMultimodal = async (imageParts: { inlineData: { data
         };
 
         const response = await ai.models.generateContent({
-            model: model,
-            contents: { parts: [...imageParts, textPart] },
+            model: MODEL_NAME,
+            contents: [{ parts: [...imageParts, textPart] }],
             config: {
                 systemInstruction: "You are an expert handwriting and document analyzer specializing in Indian competitive exams. You can read both English and Hindi scripts fluently."
             }
@@ -357,12 +373,19 @@ export const generateQuestionsFromMultimodal = async (imageParts: { inlineData: 
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const model = 'gemini-3-flash-preview';
-        const prompt = `Based on the attached images of study notes (potentially in English or Hindi), generate ${count} high-quality MCQs suitable for UPSC/SSC. Provide output in JSON format in English.`;
+        const prompt = `Extract core examination concepts from these study materials (handwritten or digital) and generate ${count} high-standard MCQs.
+        
+        **Guidelines:**
+        - **Multimodal Accuracy**: Specifically focus on dates, names, and diagrams if present.
+        - **Competitive Standard**: Questions should be at the level of UPSC/SSC CGL.
+        - **Deep Explanation**: Provide a masterclass explanation for each answer, including context not explicitly in the notes.
+        - **Fact Linkage**: Add 2-3 related facts for active recall.
+        
+        Output in professional English JSON format.`;
 
         const response = await ai.models.generateContent({
-            model: model,
-            contents: { parts: [...imageParts, { text: prompt }] },
+            model: MODEL_NAME,
+            contents: [{ parts: [...imageParts, { text: prompt }] }],
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
@@ -428,19 +451,28 @@ export const getCurrentAffairs = async (topic: string, date?: string, exam?: str
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
-    let prompt = `Provide a list of 5 recent and important current affairs articles on the topic: "${topic}".`;
+    let prompt = `Act as a Senior Intelligence Officer for Indian Government Exams (UPSC, SSC, Banking). Provide a comprehensive briefing of 10 recent and high-standard current affairs articles on the topic: "${topic}".`;
 
     if (date) {
-      prompt += ` Focus on events that occurred around or on this date: ${date}.`;
+      prompt += ` Focus primarily on events that occurred within this timeframe: ${date}.`;
     }
     
     if (exam && exam !== 'All Exams') {
-        prompt += ` The information should be highly relevant for aspirants of the **${exam}** exam.`
+        prompt += ` The analysis MUST be tailored for the **${exam}** exam, integrating syllabus-specific keywords (e.g., specific GS papers for UPSC).`
     }
 
+    prompt += `
+    
+    **Editorial Standards:**
+    - **Title**: Impactful and factual headline.
+    - **Summary**: Concise 2-sentence executive summary.
+    - **Detailed Analysis**: Explain the 'Why' and the 'Strategic Impact' (Economic, Geopolitical, Social).
+    - **Exam Relevance**: Explicitly map the event to the exam syllabus (e.g., "GS-II: International Relations", "Economy: Banking Sector Reforms").
+    - **Category**: Classify into National, International, Economy, Sci-Tech, or Sports.
+    - **Date**: The exact date of the event in readable format.`;
+
     const response = await ai.models.generateContent({
-      model,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -499,7 +531,6 @@ export const getDailyFeed = async (): Promise<DailyFeedResponse> => {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
     const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     
     const prompt = `Provide the "Daily Intelligence Feed" for Indian Government Exam aspirants (UPSC, SSC, Banking) for today, ${today}.
@@ -523,7 +554,7 @@ export const getDailyFeed = async (): Promise<DailyFeedResponse> => {
     Structure the response as a JSON object with two arrays: 'currentAffairs' and 'staticGk'.`;
 
     const response = await ai.models.generateContent({
-      model,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -595,7 +626,6 @@ export const getFactExpansion = async (fact: string): Promise<FactExpansionRespo
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
     const prompt = `Provide an in-depth expansion for the following GK/Current Affairs fact for competitive exams: "${fact}".
     
     The response must include:
@@ -606,7 +636,7 @@ export const getFactExpansion = async (fact: string): Promise<FactExpansionRespo
     Structure the response as a JSON object.`;
 
     const response = await ai.models.generateContent({
-      model,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         responseMimeType: "application/json",

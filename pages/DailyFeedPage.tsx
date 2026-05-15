@@ -4,7 +4,8 @@ import { getDailyFeed, DailyFeedResponse, DailyFeedItem, getFactExpansion, FactE
 import { Loader } from '../components/Loader';
 import { BackIcon } from '../components/icons/BackIcon';
 import { RefreshIcon } from '../components/icons/RefreshIcon';
-import { Newspaper, Book, Zap, Calendar, X, ExternalLink, Lightbulb } from 'lucide-react';
+import { Newspaper, Book, Zap, Calendar, X, ExternalLink, Lightbulb, Share2, Download, Send } from 'lucide-react';
+import { shareContent, exportToPdf } from '../lib/exportUtils';
 
 interface DailyFeedPageProps {
   onNavigate: (page: Page) => void;
@@ -25,6 +26,7 @@ export const DailyFeedPage: React.FC<DailyFeedPageProps> = ({ onNavigate, onActi
   const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const [revealedItems, setRevealedItems] = useState<Set<number>>(new Set());
+  const [isExporting, setIsExporting] = useState(false);
 
   const toggleReveal = (index: number) => {
     const newRevealed = new Set(revealedItems);
@@ -34,6 +36,18 @@ export const DailyFeedPage: React.FC<DailyFeedPageProps> = ({ onNavigate, onActi
       newRevealed.add(index);
     }
     setRevealedItems(newRevealed);
+  };
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    await exportToPdf('daily-feed-content', `Daily_Intelligence_${new Date().toLocaleDateString('en-IN').replace(/\//g, '_')}`);
+    setIsExporting(false);
+    if (onAction) onAction('Intelligence report exported as PDF', 'success');
+  };
+
+  const handleShareItem = (item: DailyFeedItem) => {
+    const text = `*${item.title}*\n\n${item.summary}\n\n*Strategic Relevance:* ${item.relevance}`;
+    shareContent(item.title, text);
   };
 
   const fetchFeed = async (force = false) => {
@@ -148,17 +162,27 @@ export const DailyFeedPage: React.FC<DailyFeedPageProps> = ({ onNavigate, onActi
               </button>
             ))}
           </div>
-          <button 
-            onClick={() => fetchFeed(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-100 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all text-[10px] font-bold uppercase tracking-widest text-gray-400"
-          >
-            <RefreshIcon />
-            <span>Force Sync</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleExportPdf}
+              disabled={isLoading || isExporting || !feed}
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 border border-indigo-500 rounded-xl hover:bg-indigo-700 transition-all text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:shadow-none"
+            >
+              {isExporting ? <Loader /> : <Download className="w-3.5 h-3.5" />}
+              <span>{isExporting ? 'Exporting...' : 'Save PDF'}</span>
+            </button>
+            <button 
+              onClick={() => fetchFeed(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-100 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all text-[10px] font-bold uppercase tracking-widest text-gray-400"
+            >
+              <RefreshIcon />
+              <span>Force Sync</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative" id="daily-feed-content">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-32 bg-white rounded-3xl border border-gray-100 shadow-sm">
             <Loader />
@@ -179,9 +203,30 @@ export const DailyFeedPage: React.FC<DailyFeedPageProps> = ({ onNavigate, onActi
                 className="group bg-white rounded-3xl border border-gray-100 p-8 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 flex flex-col relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-                  <span className="w-6 h-0.5 bg-indigo-600"></span>
-                  Node.{String(i + 1).padStart(2, '0')}
+                <div className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-4 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-0.5 bg-indigo-600"></span>
+                    Node.{String(i + 1).padStart(2, '0')}
+                  </div>
+                  <div className="flex items-center gap-2 no-pdf">
+                    <button 
+                      onClick={() => handleShareItem(item)}
+                      className="p-2 bg-gray-50 hover:bg-indigo-50 rounded-lg text-gray-400 hover:text-indigo-600 transition-all"
+                      title="Share Intelligence"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const text = `*${item.title}*\n\n${item.summary}\n\nRead more at Prep AI`;
+                        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                      }}
+                      className="p-2 bg-gray-50 hover:bg-emerald-50 rounded-lg text-gray-400 hover:text-emerald-600 transition-all"
+                      title="Share on WhatsApp"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 font-display leading-tight group-hover:text-indigo-600 transition-colors">
                   {item.title}

@@ -6,6 +6,8 @@ import { Loader } from '../components/Loader';
 import { RefreshIcon } from '../components/icons/RefreshIcon';
 import { DownloadIcon } from '../components/icons/DownloadIcon';
 import { BackIcon } from '../components/icons/BackIcon';
+import { Send, Share2 } from 'lucide-react';
+import { shareContent } from '../lib/exportUtils';
 
 interface CurrentAffairsPageProps {
     onNavigate: (page: Page) => void;
@@ -53,15 +55,24 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
     const handleSearch = (e: FormEvent) => {
         e.preventDefault();
         let newSearch = searchQuery.trim();
-        if (!newSearch && (date || toDate || exam !== 'All Exams')) {
-            newSearch = 'Latest National News';
-        } else if (!newSearch && !date && !toDate && exam === 'All Exams') {
+        if (!newSearch) {
             newSearch = 'Latest National News';
         }
         setActiveSearch(newSearch);
         setActiveDate(date);
         setActiveToDate(toDate);
         setActiveExam(exam);
+    };
+
+    const handleReset = () => {
+        setSearchQuery('');
+        setDate('');
+        setToDate('');
+        setExam('All Exams');
+        setActiveSearch('Latest National News');
+        setActiveDate('');
+        setActiveToDate('');
+        setActiveExam('All Exams');
     };
 
     const handleRegenerate = async () => {
@@ -149,47 +160,69 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                         Curated intelligence report mapping global events to your specific exam syllabus.
                     </p>
                 </div>
-                <button onClick={handleDownloadReport} className="flex-shrink-0 flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-black transition-all active:scale-95 text-xs uppercase tracking-widest whitespace-nowrap">
-                    <DownloadIcon /> Export Intelligence
-                </button>
+                <div className="flex gap-2 flex-shrink-0">
+                    <button 
+                        onClick={() => {
+                            const text = `*Intelligence Report: ${activeSearch}*\n\nCurated insights for government exam prep.\n\nRead more at Prep AI`;
+                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                        }}
+                        className="flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-700 transition-all active:scale-95 text-[10px] uppercase tracking-widest whitespace-nowrap"
+                    >
+                        <Send className="w-4 h-4" /> WhatsApp
+                    </button>
+                    <button onClick={handleDownloadReport} className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-black transition-all active:scale-95 text-[10px] uppercase tracking-widest whitespace-nowrap">
+                        <DownloadIcon /> Export
+                    </button>
+                    <button 
+                        onClick={() => shareContent(`Briefing: ${activeSearch}`, `Check out this current affairs intelligence report on Prep AI.`)}
+                        className="flex items-center gap-2 px-4 py-3 bg-blue-50 text-blue-600 border border-blue-100 font-bold rounded-xl hover:bg-blue-100 transition-all active:scale-95 text-[10px] uppercase tracking-widest whitespace-nowrap"
+                    >
+                        <Share2 className="w-4 h-4" />
+                    </button>
+                </div>
             </header>
 
-            <div className="sticky top-20 z-40 bg-[#FBFCFD]/80 backdrop-blur-md -mx-4 px-4 py-3 mb-10 border-b border-gray-100">
-                <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-xl -mx-4 px-4 py-4 mb-10 border-b border-gray-100 shadow-sm transition-all duration-300">
+                <form onSubmit={handleSearch} className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                     <div className="md:col-span-3 relative">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Search Topic</label>
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Topic (e.g. Finance)..."
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold placeholder:text-gray-300 uppercase tracking-widest"
-                        />
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 block">Search Intelligence</label>
+                        <div className="relative group">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Topic (e.g. Lithium Reserves)..."
+                                className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold placeholder:text-gray-300 uppercase tracking-widest pl-10"
+                            />
+                            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </div>
+                        </div>
                     </div>
                     <div className="md:col-span-2">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">From Date</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 block">From</label>
                         <input
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
+                            className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
                         />
                     </div>
                     <div className="md:col-span-2">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">To Date (Optional)</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 block">To</label>
                         <input
                             type="date"
                             value={toDate}
                             onChange={(e) => setToDate(e.target.value)}
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
+                            className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest text-gray-900"
                         />
                     </div>
-                    <div className="md:col-span-3">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Exam Filter</label>
+                    <div className="md:col-span-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 block">Focus</label>
                         <select
                             value={exam}
                             onChange={(e) => setExam(e.target.value)}
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest"
+                            className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-300 text-xs font-bold uppercase tracking-widest appearance-none cursor-pointer"
                         >
                             <option>All Exams</option>
                             <option>UPSC</option>
@@ -197,18 +230,37 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                             <option>Banking</option>
                         </select>
                     </div>
-                    <div className="md:col-span-2">
+                    <div className="md:col-span-3 flex gap-2">
                          <button
                             type="submit"
-                            className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-[10px] font-black uppercase tracking-[0.1em]"
+                            className="flex-grow py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 text-[10px] font-black uppercase tracking-[0.2em]"
                         >
-                            Update
+                            Sync Intelligence
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleReset}
+                            className="p-3.5 bg-gray-100 text-gray-400 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95 text-[10px]"
+                            title="Reset Search"
+                        >
+                             <RefreshIcon />
                         </button>
                     </div>
                 </form>
             </div>
 
             <div className="relative min-h-[600px]">
+                {(activeSearch !== 'Latest National News' || activeDate || activeToDate || activeExam !== 'All Exams') && !isLoading && (
+                    <div className="mb-8 flex items-center justify-between">
+                        <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                            Results for: <span className="text-blue-600">"{activeSearch === 'Latest National News' ? 'Recent Events' : activeSearch}"</span>
+                        </h2>
+                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                            Found {newsItems.length} Intelligence Reports
+                        </div>
+                    </div>
+                )}
                 {isLoading && !isRegenerating ? (
                     <div className="flex flex-col items-center justify-center py-32">
                         <Loader />
@@ -252,11 +304,30 @@ export const CurrentAffairsPage: React.FC<CurrentAffairsPageProps> = ({ onNaviga
                                                     {item.detailedAnalysis}
                                                 </p>
                                             </div>
-                                            <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-50 self-start">
+                                            <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-50 self-start relative group/card">
                                                 <h4 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3">Exam Focus</h4>
-                                                <p className="text-xs text-blue-900 font-bold italic leading-relaxed">
+                                                <p className="text-xs text-blue-900 font-bold italic leading-relaxed mb-4">
                                                     "{item.examRelevance}"
                                                 </p>
+                                                <div className="flex gap-2 justify-end">
+                                                    <button 
+                                                        onClick={() => {
+                                                            const text = `*Current Affairs: ${item.title}*\n\nAnalysis: ${item.summary}\n\nRead more at Prep AI`;
+                                                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                                                        }}
+                                                        className="p-1.5 bg-white text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                                                        title="WhatsApp"
+                                                    >
+                                                        <Send className="w-3 h-3" />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => shareContent(item.title, item.summary)}
+                                                        className="p-1.5 bg-white text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                                        title="Share"
+                                                    >
+                                                        <Share2 className="w-3 h-3" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
